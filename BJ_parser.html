@@ -1,0 +1,169 @@
+<script type="text/javascript">
+    const allLogTypes = "DEFAULT, INIT, FULL_IN_RUN, RULE_IO, NEW_IN,\
+ SET_VAR_VAL_SET, SET_VAR_VAL_SUB, SET_VAR_OTHER, SET_ATRIBUTE, CREATE_ATRIBUTE, JSON_CHANGE, SET_SELECTOR_CHECK, SUB_SELECTOR_CHECK, SUB_REPETITION"
+    // const defLogTypes = "DEFAULT, INIT, FULL_IN_RUN, RULE_IO, NEW_IN,\
+    //  SET_VAR_VAL_SET, SET_VAR_VAL_SUB, SET_VAR_OTHER, SET_ATRIBUTE, CREATE_ATRIBUTE, JSON_CHANGE, SET_SELECTOR_CHECK, SUB_SELECTOR_CHECK, SUB_REPETITION"
+    RED.nodes.registerType('BJ-parser', {
+        category: 'common',
+        // category: 'parser',
+        color: '#0B99D8',
+        defaults: {
+            name: { value: "" },
+            // alias: { value: "" },
+            maxBinLen: { value: 64, required: true },
+            supresedLogs: {
+                value: allLogTypes
+            },
+
+        },
+        align: 'left',
+        icon: "icon.png",
+        inputs: 1,
+        outputs: 1,
+        label: function () {
+            return this.name || "parser";
+        },
+
+    });
+
+    const avalibleLogTypes = {
+        "DEFAULT": true,
+        "INIT": true,
+        "FULL_IN_RUN": true,
+        "RULE_IO": true,
+        "NEW_IN": true,
+        "SET_VAR_VAL_SET": true,
+        "SET_VAR_VAL_SUB": true,
+        "SET_VAR_OTHER": true,
+        "SET_ATRIBUTE": true,
+        "CREATE_ATRIBUTE": true,
+        "JSON_CHANGE": true,
+        "SET_SELECTOR_CHECK": true,
+        "SUB_SELECTOR_CHECK": true,
+        "SUB_REPETITION": true,
+        "WARN": true,
+        "ERR": true
+    }
+
+    function check() {
+        const maxbinLen_elm = document.getElementById("node-input-maxBinLen");
+        const supresedLogs_elm = document.getElementById("node-input-supresedLogs");
+
+        const validLogHeadders = supresedLogs_elm.value
+            .toUpperCase()
+            .split(",")
+            .reduce((acc, val) => (acc && (!val || val.trim() in avalibleLogTypes)), true);
+        const validMaxLen = maxbinLen_elm.value % 1 === 0;
+
+        if (!validLogHeadders)
+            supresedLogs_elm.setCustomValidity("Err");
+        else
+            supresedLogs_elm.setCustomValidity("");
+        if (!validMaxLen)
+            maxbinLen_elm.setCustomValidity("Err");
+        else
+            maxbinLen_elm.setCustomValidity("");
+    }
+
+    function selectAllLogHeadders() {
+        const supresedLogs_elm = document.getElementById("supr-log-headers").value = allLogTypes;
+    }
+
+</script>
+
+<style>
+    .fileInput {
+        display: flex !important;
+        justify-content: space-between;
+        box-sizing: border-box;
+        height: 34px;
+        color: #555;
+        border-radius: 4px;
+        white-space: nowrap;
+        border: 1px solid #ccc;
+        min-width: fit-content;
+    }
+
+    .fileInput:hover {
+        border: 1px solid #5596e6;
+    }
+
+    .file-input-button {
+        background: #ccc;
+        color: #333;
+        padding: 6px;
+        font-weight: 500;
+    }
+
+    .fileInputText {
+        padding: 6px;
+        font-weight: 400;
+    }
+
+    .fileInputClear {
+        padding: 6px;
+        border-left: 1px solid #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        padding: 0;
+    }
+
+    .input-button-wrap {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: stretch;
+        width: 70%;
+        margin-left: 5px;
+    }
+
+    .input-button-wrap>input {
+        width: 100% !important;
+    }
+</style>
+
+<script type="text/x-red" data-template-name="BJ-parser">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-maxBinLen"> Max bin log len </label>
+        <input type="number" id="node-input-maxBinLen" autocomplete="off" placeholder="'-1' for inf" onchange="check()" >
+
+    </div>
+
+    <div class="form-row" style="display: flex;">
+        <label for="node-input-supresedLogs"> Suppressed headers </label>
+        <div class="input-button-wrap">
+            <input type="text" id="node-input-supresedLogs" placeholder="coma separated" onchange="check()" >
+            <button class="red-ui-button red-ui-button-small" onClick="selectAllLogHeadders()">
+                <i class="fa fa-check-square-o"></i>
+                Select all
+            </button>
+        </div>
+    </div>
+
+</script>
+
+
+
+<script type="text/x-red" data-help-name="unipi-input">
+        <p>
+            Read README.md
+        </p>
+
+        <!-- <div class="form-row">
+            <label for="node-input-alias"><i class="fa fa-user-circle-o"></i> Alias</label>
+            <input type="text" id="node-input-alias" placeholder="Write an Alias" onchange="check()" onkeyup="disable()" onkeydown="enable()" >
+        </div> -->
+        <!-- <div class="form-row">
+            <label for="node-input-seeorig"><i class="fa fa-list-ul"></i> See orig msg</label>
+            <select type="text" id="node-input-seeorig">
+                <option value="1">True</option>
+                <option value="0">False</option>
+            </select>
+        </div> -->
+</script>
