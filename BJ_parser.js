@@ -16,8 +16,7 @@ module.exports = function (RED) {
 
 		this.on('input', message_ => {
 			const stringHex = message_.payload;
-			const schema = parserSchemaModule.parseRuleMap(message_.parsingSchema);
-			const parser = new parserModule.default(schema, parserConfig);
+			const parser = new parserModule.default(message_.parsingSchema, parserConfig);
 
 			message_.payload = parser.runHexAndWrap(stringHex);
 			this.send(message_);
