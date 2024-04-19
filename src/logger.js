@@ -95,11 +95,11 @@ class DebugLogger {
     constructor(options) {
         this.LogList = [];
         this.DefaultHeader = DEBUG_TYPE.DEFAULT;
-        this.SupresedHeadersMap = Array.isArray(options === null || options === void 0 ? void 0 : options.supressHeader) ? options.supressHeader.reduce((acc, val) => {
+        this.SuppressedHeadersMap = Array.isArray(options === null || options === void 0 ? void 0 : options.suppressHeader) ? options.suppressHeader.reduce((acc, val) => {
             acc[val] = true;
             return acc;
         }, {}) : {};
-        this.maxStrLenght = options === null || options === void 0 ? void 0 : options.maxStrLenght;
+        this.maxStrLength = options === null || options === void 0 ? void 0 : options.maxStrLength;
         this.logBinAsHex = (options === null || options === void 0 ? void 0 : options.binAsHex) ? options.binAsHex : false;
         this.subParsingPrefix = 0;
         this.directToConsole = options.directToConsole;
@@ -117,7 +117,7 @@ class DebugLogger {
         this.logInner(type, this.logBinAsHex, args);
     }
     logTypeEnabled(type) {
-        return !(type in this.SupresedHeadersMap);
+        return !(type in this.SuppressedHeadersMap);
     }
     resetState() {
         this.LogList = [];
@@ -137,14 +137,14 @@ class DebugLogger {
         if (!this.logTypeEnabled(type))
             return;
         const typeVal = DEBUG_TYPET_TR_MAP[type];
-        const maxLen = typeVal.ignoreLenRestriction ? 1000 : this.maxStrLenght;
+        const maxLen = typeVal.ignoreLenRestriction ? 1000 : this.maxStrLength;
         const head = "-" + typeVal.head + "-\t";
         const headLen = head.length - 1;
         const printableArgs = args.map((val, valI) => {
             let ret = (valI === 0) ? head : '';
             if ((0, binIter_1.isBinIter)(val)) {
                 const iter = val.genRangeIter();
-                ret += toHex ? (0, bin_1.consumeItaratorToPrint_hex)(iter, maxLen) : (0, bin_1.consumeItaratorToPrint_bin)(iter, maxLen);
+                ret += toHex ? (0, bin_1.consumeIterToPrint_hex)(iter, maxLen) : (0, bin_1.consumeIterToPrint_bin)(iter, maxLen);
             }
             else if (Array.isArray(val) && val.length > 0 && val[0].name !== undefined && val[0].type !== undefined) {
                 let isArr = false;
@@ -184,4 +184,5 @@ class DebugLogger {
 }
 exports.DebugLogger = DebugLogger;
 ;
-//# sourceMappingURL=loger.js.map
+//# sourceMappingURL=logger.js.map
+

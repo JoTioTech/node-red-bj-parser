@@ -11,7 +11,7 @@
             name: { value: "" },
             // alias: { value: "" },
             maxBinLen: { value: 64, required: true },
-            supresedLogs: {
+            suppressedLogs: {
                 value: allLogTypes
             },
 
@@ -26,7 +26,7 @@
 
     });
 
-    const avalibleLogTypes = {
+    const availableLogTypes = {
         "DEFAULT": true,
         "INIT": true,
         "FULL_IN_RUN": true,
@@ -47,26 +47,26 @@
 
     function check() {
         const maxbinLen_elm = document.getElementById("node-input-maxBinLen");
-        const supresedLogs_elm = document.getElementById("node-input-supresedLogs");
+        const suppressedLogs_elm = document.getElementById("node-input-suppressedLogs");
 
-        const validLogHeadders = supresedLogs_elm.value
+        const validLogHeaders = suppressedLogs_elm.value
             .toUpperCase()
             .split(",")
-            .reduce((acc, val) => (acc && (!val || val.trim() in avalibleLogTypes)), true);
+            .reduce((acc, val) => (acc && (!val || val.trim() in availableLogTypes)), true);
         const validMaxLen = maxbinLen_elm.value % 1 === 0;
 
-        if (!validLogHeadders)
-            supresedLogs_elm.setCustomValidity("Err");
+        if (!validLogHeaders)
+            suppressedLogs_elm.setCustomValidity("Err");
         else
-            supresedLogs_elm.setCustomValidity("");
+            suppressedLogs_elm.setCustomValidity("");
         if (!validMaxLen)
             maxbinLen_elm.setCustomValidity("Err");
         else
             maxbinLen_elm.setCustomValidity("");
     }
 
-    function selectAllLogHeadders() {
-        const supresedLogs_elm = document.getElementById("supr-log-headers").value = allLogTypes;
+    function selectAllLogHeaders() {
+        const suppressedLogs_elm = document.getElementById("supr-log-headers").value = allLogTypes;
     }
 
 </script>
@@ -136,10 +136,10 @@
     </div>
 
     <div class="form-row" style="display: flex;">
-        <label for="node-input-supresedLogs"> Suppressed headers </label>
+        <label for="node-input-suppressedLogs"> Suppressed headers </label>
         <div class="input-button-wrap">
-            <input type="text" id="node-input-supresedLogs" placeholder="coma separated" onchange="check()" >
-            <button class="red-ui-button red-ui-button-small" onClick="selectAllLogHeadders()">
+            <input type="text" id="node-input-suppressedLogs" placeholder="coma separated" onchange="check()" >
+            <button class="red-ui-button red-ui-button-small" onClick="selectAllLogHeaders()">
                 <i class="fa fa-check-square-o"></i>
                 Select all
             </button>

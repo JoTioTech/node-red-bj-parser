@@ -29,7 +29,7 @@ exports.parseRuleMap = parseRuleMap;
 const SetActionMap = {
     "SET": enums_1.SET_ACTION_ENUM.SET_UPDATE,
     "ADD": enums_1.SET_ACTION_ENUM.INCREMENT,
-    "APPEDN": enums_1.SET_ACTION_ENUM.APPEND
+    "APPEND": enums_1.SET_ACTION_ENUM.APPEND
 };
 function isInvalidSetAction(val) {
     return (val && SetActionMap[val] === undefined);
@@ -101,3 +101,4 @@ function parseRule(rule, ruleMap) {
     return newRule;
 }
 //# sourceMappingURL=parseSchema.js.map
+

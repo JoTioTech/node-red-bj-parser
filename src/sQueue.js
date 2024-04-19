@@ -38,14 +38,14 @@ class SQueue {
             return '';
         return this.strRef[this.start];
     }
-    seachUntil_char(trgStr) {
+    searchUntil_char(trgStr) {
         const startingIndex = this.start;
         while (this.hasNext()) {
             const char = this.next();
             if (char == trgStr)
                 return new SQueue(this.strRef, startingIndex, this.start - 1);
         }
-        throw new errors_1.StrTargetError("Cloasing char not found in string:", this.strRef, startingIndex);
+        throw new errors_1.StrTargetError("Closing char not found in string:", this.strRef, startingIndex);
     }
     serchUntil_closingBracket() {
         return this.searchPair('(', ')', 1);
@@ -60,7 +60,7 @@ class SQueue {
             if (char == '\'')
                 return new SQueue(this.strRef, startingIndex, this.start - 1);
         }
-        throw new errors_1.StrTargetError("Cloasing char not found in string:", this.strRef, startingIndex);
+        throw new errors_1.StrTargetError("Closing char not found in string:", this.strRef, startingIndex);
     }
     peakAsString() {
         return this.strRef.slice(this.start, this.end);
@@ -80,7 +80,7 @@ class SQueue {
     throwLastErr(title) {
         if (this.errPairNotFount.length === 0)
             throw new Error("Internal err");
-        throw new errors_1.StrTargetError(title || "Cloasing char not found in string:", this.strRef, this.errPairNotFount.pop());
+        throw new errors_1.StrTargetError(title || "Closing char not found in string:", this.strRef, this.errPairNotFount.pop());
     }
     throwFullStrErr(err, shift = 0) {
         throw new errors_1.StrTargetError(err, this.strRef, this.start + shift);
@@ -105,8 +105,9 @@ class SQueue {
                 return new SQueue(this.strRef, startingIndex, this.start);
             }
         }
-        throw new errors_1.StrTargetError("Cloasing char not found in string:", this.strRef, startingIndex);
+        throw new errors_1.StrTargetError("Closing char not found in string:", this.strRef, startingIndex);
     }
 }
 exports.default = SQueue;
 //# sourceMappingURL=sQueue.js.map
+

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.consumeItaratorToPrint_hex = exports.consumeItaratorToPrint_bin = exports.consumeIiterToUTF8 = exports.consumeIiterToBuffer = exports.consumeIiterToArrString = exports.consumeIterToInt = exports.concatIterator = exports.genMaskIterator = exports.binFromHex = exports.Multi_iterator = exports.RA_iterator = exports.BaseBin = void 0;
+exports.consumeIterToPrint_hex = exports.consumeIterToPrint_bin = exports.consumeIterToUTF8 = exports.consumeIterToBuffer = exports.consumeIterToArrString = exports.consumeIterToInt = exports.concatIterator = exports.genMaskIterator = exports.binFromHex = exports.Multi_iterator = exports.RA_iterator = exports.BaseBin = void 0;
 const binIter_1 = require("./binIter");
 const enums_1 = require("./enums");
 const sQueue_1 = __importDefault(require("./sQueue"));
@@ -73,7 +73,7 @@ class Multi_iterator extends binIter_1.BinIter {
             endRange++;
         }
         endRange++;
-        const newRranges = this.ranges.slice(startRange, endRange).map((val, i) => {
+        const newRanges = this.ranges.slice(startRange, endRange).map((val, i) => {
             const ret = {
                 start: val.start - trgId,
                 end: val.end - trgId,
@@ -83,18 +83,18 @@ class Multi_iterator extends binIter_1.BinIter {
             val.dirty.refCount++;
             return ret;
         });
-        if (newRranges.length === 1) {
+        if (newRanges.length === 1) {
             Multi_iterator.DEV_TABS--;
-            newRranges[0].dirty.refCount--;
-            return newRranges[0].iter.genRangeIter(-1 * newRranges[0].start, trgIdE + trgId - newRranges[0].start);
+            newRanges[0].dirty.refCount--;
+            return newRanges[0].iter.genRangeIter(-1 * newRanges[0].start, trgIdE + trgId - newRanges[0].start);
         }
-        else if (newRranges.length !== 0) {
-            newRranges[0].dirty.refCount--;
-            newRranges[0].dirty = { refCount: 0 };
-            newRranges[0].iter = newRranges[0].iter.genRangeIter(-1 * newRranges[0].start);
-            newRranges[0].start = 0;
+        else if (newRanges.length !== 0) {
+            newRanges[0].dirty.refCount--;
+            newRanges[0].dirty = { refCount: 0 };
+            newRanges[0].iter = newRanges[0].iter.genRangeIter(-1 * newRanges[0].start);
+            newRanges[0].start = 0;
         }
-        const ret = new Multi_iterator(newRranges, end - start);
+        const ret = new Multi_iterator(newRanges, end - start);
         Multi_iterator.DEV_TABS--;
         return ret;
     }
@@ -102,10 +102,10 @@ class Multi_iterator extends binIter_1.BinIter {
 exports.Multi_iterator = Multi_iterator;
 Multi_iterator.DEV_TABS = 0;
 function binFromHex(str) {
-    const serchString = str.replace(/[ \t\n]/g, '').toLocaleLowerCase();
-    const ret = new Array(serchString.length * 4);
-    for (let i = 0; i < serchString.length; i++) {
-        let bin = parseInt(serchString[i], 16);
+    const searchString = str.replace(/[ \t\n]/g, '').toLocaleLowerCase();
+    const ret = new Array(searchString.length * 4);
+    for (let i = 0; i < searchString.length; i++) {
+        let bin = parseInt(searchString[i], 16);
         for (let j = 0; j < 4; j++) {
             ret[i * 4 + 3 - j] = (bin >> j) % 2 === 1;
         }
@@ -117,14 +117,14 @@ function genMaskIterator(base, mask, executor, inverse = false) {
     const expandedMask = expandMask(new sQueue_1.default(mask), executor, inverse);
     const ranges = [];
     let lastEnd = 0;
-    let agregadedLen = 0;
+    let aggregatedLen = 0;
     for (let i = 0; i < expandedMask.length; i++) {
         let len = expandedMask[i].len;
-        const lastAgrLen = agregadedLen;
+        const lastAgrLen = aggregatedLen;
         if (len === -1) {
-            agregadedLen += base.getSize() - lastEnd;
+            aggregatedLen += base.getSize() - lastEnd;
             ranges.push({
-                end: agregadedLen,
+                end: aggregatedLen,
                 start: lastAgrLen,
                 iter: base.genRangeIter(lastEnd),
                 dirty: {
@@ -139,9 +139,9 @@ function genMaskIterator(base, mask, executor, inverse = false) {
         if (expandedMask[i].val) {
             if (nextEnd > base.getSize())
                 len = len - (nextEnd - base.getSize());
-            agregadedLen += len;
+            aggregatedLen += len;
             ranges.push({
-                end: agregadedLen,
+                end: aggregatedLen,
                 start: lastAgrLen,
                 iter: base.genRangeIter(lastEnd, nextEnd),
                 dirty: {
@@ -153,7 +153,7 @@ function genMaskIterator(base, mask, executor, inverse = false) {
             break;
         lastEnd = nextEnd;
     }
-    return new Multi_iterator(ranges, agregadedLen);
+    return new Multi_iterator(ranges, aggregatedLen);
 }
 exports.genMaskIterator = genMaskIterator;
 function concatIterator(list) {
@@ -179,13 +179,13 @@ function expandMask(mask, executor, inverse) {
     while (mask.hasNext()) {
         mask.shiftWhitespace();
         const char = mask.next();
-        let loadedSimbol;
+        let loadedSymbol;
         let repetition = 1;
         if (char === '1') {
-            loadedSimbol = !inverse;
+            loadedSymbol = !inverse;
         }
         else if (char === '0') {
-            loadedSimbol = inverse;
+            loadedSymbol = inverse;
         }
         else {
             throw new Error('Not valid mask');
@@ -197,18 +197,18 @@ function expandMask(mask, executor, inverse) {
             mask.popPairEnd();
         }
         if (repetition === -1) {
-            if (loadedSimbol) {
+            if (loadedSymbol) {
                 parsedMask.push({
                     len: -1,
-                    val: loadedSimbol
+                    val: loadedSymbol
                 });
             }
             return parsedMask;
         }
-        if (parsedMask.length === 0 || parsedMask[parsedMask.length - 1].val != loadedSimbol) {
+        if (parsedMask.length === 0 || parsedMask[parsedMask.length - 1].val != loadedSymbol) {
             parsedMask.push({
                 len: repetition,
-                val: loadedSimbol
+                val: loadedSymbol
             });
         }
         else {
@@ -227,15 +227,15 @@ function consumeIterToInt(iter) {
     return res;
 }
 exports.consumeIterToInt = consumeIterToInt;
-function consumeIiterToArrString(iter) {
+function consumeIterToArrString(iter) {
     let ret = '';
     while (iter.hasNext()) {
         ret += iter.next() ? "1" : "0";
     }
     return ret;
 }
-exports.consumeIiterToArrString = consumeIiterToArrString;
-function consumeIiterToBuffer(iter) {
+exports.consumeIterToArrString = consumeIterToArrString;
+function consumeIterToBuffer(iter) {
     const len = iter.getSize() / 8;
     const bufArr = [];
     for (let i = 0; i < len; i++) {
@@ -249,12 +249,12 @@ function consumeIiterToBuffer(iter) {
     bufArr.reverse();
     return Buffer.from(bufArr);
 }
-exports.consumeIiterToBuffer = consumeIiterToBuffer;
-function consumeIiterToUTF8(iter) {
-    return consumeIiterToBuffer(iter).toString('utf8');
+exports.consumeIterToBuffer = consumeIterToBuffer;
+function consumeIterToUTF8(iter) {
+    return consumeIterToBuffer(iter).toString('utf8');
 }
-exports.consumeIiterToUTF8 = consumeIiterToUTF8;
-function consumeItaratorToPrint_bin(iter, length) {
+exports.consumeIterToUTF8 = consumeIterToUTF8;
+function consumeIterToPrint_bin(iter, length) {
     let ret = '';
     const absLen = iter.getSize();
     const len = (!length || length < 0 || length > iter.getSize()) ? iter.getSize() : length;
@@ -270,8 +270,8 @@ function consumeItaratorToPrint_bin(iter, length) {
     }
     return ret;
 }
-exports.consumeItaratorToPrint_bin = consumeItaratorToPrint_bin;
-function consumeItaratorToPrint_hex(iter, length) {
+exports.consumeIterToPrint_bin = consumeIterToPrint_bin;
+function consumeIterToPrint_hex(iter, length) {
     let ret = '';
     let j = 8;
     const absLen = iter.getSize();
@@ -298,7 +298,7 @@ function consumeItaratorToPrint_hex(iter, length) {
     }
     return ret;
 }
-exports.consumeItaratorToPrint_hex = consumeItaratorToPrint_hex;
+exports.consumeIterToPrint_hex = consumeIterToPrint_hex;
 function formatBinUnits(val) {
     if (val > 1000000)
         return (val / 1000000).toFixed(6).padStart(10, " ") + " Mb";
@@ -308,3 +308,4 @@ function formatBinUnits(val) {
         return val.toFixed(0).padStart(3, " ") + " b";
 }
 //# sourceMappingURL=bin.js.map
+

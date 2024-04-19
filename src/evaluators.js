@@ -330,9 +330,10 @@ class ExpEvaluator {
         }
         const varMeta = this.varList[fullName];
         if (!varMeta)
-            throw Error(`Not a valid var name (${fullName})\n   Avalible names: ${Object.keys(this.varList)}`);
+            throw Error(`Not a valid var name (${fullName})\n   Available names: ${Object.keys(this.varList)}`);
         return [varMeta.type, varMeta.val];
     }
 }
 exports.ExpEvaluator = ExpEvaluator;
 //# sourceMappingURL=evaluators.js.map
+

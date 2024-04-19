@@ -9,6 +9,7 @@ var ExeType;
     ExeType[ExeType["BOLL"] = 3] = "BOLL";
     ExeType[ExeType["STRING"] = 4] = "STRING";
     ExeType[ExeType["PATH"] = 5] = "PATH";
+    ExeType[ExeType["FLOAT"] = 6] = "FLOAT";
 })(ExeType = exports.ExeType || (exports.ExeType = {}));
 exports.ExeTypeReverse = [
     "ANY",
@@ -17,6 +18,7 @@ exports.ExeTypeReverse = [
     "BOLL",
     "STRING",
     "PATH",
+		"FLOAT",
 ];
 var SET_ACTION_ENUM;
 (function (SET_ACTION_ENUM) {
@@ -30,3 +32,4 @@ var JSON_PATH_TYPE;
     JSON_PATH_TYPE[JSON_PATH_TYPE["ARR"] = 1] = "ARR";
 })(JSON_PATH_TYPE = exports.JSON_PATH_TYPE || (exports.JSON_PATH_TYPE = {}));
 //# sourceMappingURL=enums.js.map
+
