@@ -72,6 +72,15 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return bigEndian < 0x80_00_00_00 ? bigEndian : bigEndian - 0x1_00_00_00_00;
 		},
 	},
+	toInt24LE: { // Interpret number in arguments as little-endian
+		name: 'toInt24LE',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			const bigEndian = ((argumentArray[0] & 0xFF) << 16) | ((argumentArray[0] & 0xFF_00) << 8) | ((argumentArray[0] & 0xFF_00_00) >> 8);
+			return bigEndian < 0x80_00_00 ? bigEndian : bigEndian - 0x1_00_00_00;
+		},
+	},
 	toFloat: {
 		name: 'toFloat',
 		argsType: [enums_1.ExeType.INT],
