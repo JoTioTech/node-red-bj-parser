@@ -1,4 +1,4 @@
-# PARSER
+# BJ parser
 - parser form binary to simple json format
 
 ## ROOT

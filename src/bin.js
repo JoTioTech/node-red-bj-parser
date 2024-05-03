@@ -254,6 +254,7 @@ function consumeIterToUTF8(iter) {
     return consumeIterToBuffer(iter).toString('utf8');
 }
 exports.consumeIterToUTF8 = consumeIterToUTF8;
+
 function consumeIterToPrint_bin(iter, length) {
     let ret = '';
     const absLen = iter.getSize();

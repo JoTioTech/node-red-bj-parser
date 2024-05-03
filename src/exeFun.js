@@ -46,6 +46,14 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return argumentArray[0] < 0x80_00_00_00 ? argumentArray[0] : argumentArray[0] - 0x1_00_00_00_00;
 		},
 	},
+	toUInt32: {
+		name: 'toUInt32',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			return argumentArray[0];
+		},
+	},
 
 	toInt16: {
 		name: 'toInt16',
