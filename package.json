@@ -1,12 +1,17 @@
 {
     "name": "@jotiotech/node-red-bj-parser",
-    "version": "1.0.0",
+    "version": "1.0.3",
+		"engines": {
+			"node" : ">=12.0.0"
+		},
+		"license": "MIT",
     "description": "",
     "dependencies": {},
     "keywords": [
-        "node-red"
+        "node-red", "parsing"
     ],
     "node-red": {
+				"version" : ">=1.0.0",
         "nodes": {
             "BJ-parser": "BJ_parser.js"
         }

@@ -3,7 +3,7 @@
 
 ## ROOT
 - list all all rules
-- **global skope** for rule name
+- **global scope** for rule name
 #### Attributes
 - name
     - OPTIONAL; default: ""
@@ -316,6 +316,26 @@
     - RET: <NUM>
     - ATR: <NUM>
     - std. conversion (sign first bit)
+- toInt16LE
+    - RET: <NUM>
+    - ATR: <NUM>
+    - std. conversion from little endian (sign first bit)
+- toInt32
+    - RET: <NUM>
+    - ATR: <NUM>
+    - std. conversion (sign first bit)
+- toInt32LE
+    - RET: <NUM>
+    - ATR: <NUM>
+    - std. conversion from little endian (sign first bit)
+- toFloat
+    - RET: <NUM>
+    - ATR: <NUM>
+    - std. conversion (sign first bit)
+- toFloatLE
+    - RET: <NUM>
+    - ATR: <NUM>
+    - std. conversion from little endian (sign first bit)
 - toUtf8
     - RET: <NUM>
     - ATR: <ANY>
