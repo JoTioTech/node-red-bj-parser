@@ -1,6 +1,6 @@
 {
-    "name": "@jotio/binary-json-parser",
-    "version": "2.0.0",
+    "name": "@jotiotech/node-red-bj-parser",
+    "version": "1.0.0",
     "description": "",
     "dependencies": {},
     "keywords": [
