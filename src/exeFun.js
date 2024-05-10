@@ -106,6 +106,80 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return f;
 		},
 	},
+	toDouble: {
+		name: 'toDouble',
+		argsType: [enums_1.ExeType.INT, enums_1.ExeType.INT],
+		retType: enums_1.ExeType.FLOAT,
+		fun(argumentArray, variableMap) {
+			const sign = argumentArray[0] >>> 63 === 0 ? 1 : -1;
+			const e = (argumentArray[0] >>> 52) & 0x7FF;
+			const m = e === 0 ? (argumentArray[0] & 0x7FF_FFFF_FFFF_F) << 1 : (argumentArray[0] & 0x7FF_FFFF_FFFF_F) | 0x800_00_00_00_00;
+			const f = sign * m * 2 ** (e - 1075);
+			return f;
+		},
+	},
+	toDoubleLE: {
+		name: 'toDoubleLE',
+		argsType: [enums_1.ExeType.INT, enums_1.ExeType.INT],
+		retType: enums_1.ExeType.FLOAT,
+		fun(argumentArray, variableMap) {
+			const bigEndian = ((argumentArray[0] & 0xFF) << 56) | ((argumentArray[0] & 0xFF_00) << 40) | ((argumentArray[0] & 0xFF_00_00) << 24) | ((argumentArray[0] & 0xFF_00_00_00) << 8) | ((argumentArray[0] & 0xFF_00_00_00_00) >> 8) | ((argumentArray[0] & 0xFF_00_00_00_00_00) >> 24) | (argumentArray[0] >> 40) | ((argumentArray[0] >> 56) & 0xFF);
+			const sign = bigEndian >>> 63 === 0 ? 1 : -1;
+			const e = (bigEndian >>> 52) & 0x7FF;
+			const m = e === 0 ? (bigEndian & 0x7FF_FFFF_FFFF_F) << 1 : (bigEndian & 0x7FF_FFFF_FFFF_F) | 0x800_00_00_00_00;
+			const f = sign * m * 2 ** (e - 1075);
+			return f;
+		}
+	},
+	toIntBCD2Digit: {
+		name: 'toIntBCD2Digit',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			return ((argumentArray[0] & 0xF) % 10) + 10 * (((argumentArray[0] >> 4) & 0xF) % 10) + 100 * (((argumentArray[0] >> 8) & 0xF) % 10);
+
+		},
+	},
+	toIntBCD4Digit: {
+		name: 'toIntBCD4Digit',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			return ((argumentArray[0] & 0xF) % 10) + 10 * (((argumentArray[0] >> 4) & 0xF) % 10) + 100 * (((argumentArray[0] >> 8) & 0xF) % 10) + 1000 * (((argumentArray[0] >> 12) & 0xF) % 10);
+		},
+	},
+	toIntBCD6Digit: {
+		name: 'toIntBCD6Digit',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			return ((argumentArray[0] & 0xF) % 10) + 10 * (((argumentArray[0] >> 4) & 0xF) % 10) + 100 * (((argumentArray[0] >> 8) & 0xF) % 10) + 1000 * (((argumentArray[0] >> 12) & 0xF) % 10) + 10_000 * (((argumentArray[0] >> 16) & 0xF) % 10) + 100_000 * (((argumentArray[0] >> 20) & 0xF) % 10);
+		},
+	},
+	toIntBCD8Digit: {
+		name: 'toIntBCD8Digit',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			return ((argumentArray[0] & 0xF) % 10) + 10 * (((argumentArray[0] >> 4) & 0xF) % 10) + 100 * (((argumentArray[0] >> 8) & 0xF) % 10) + 1000 * (((argumentArray[0] >> 12) & 0xF) % 10) + 10_000 * (((argumentArray[0] >> 16) & 0xF) % 10) + 100_000 * (((argumentArray[0] >> 20) & 0xF) % 10) + 1_000_000 * (((argumentArray[0] >> 24) & 0xF) % 10) + 10_000_000 * (((argumentArray[0] >> 28) & 0xF) % 10);
+		},
+	},
+	toIntBCD10Digit: {
+		name: 'toIntBCD10Digit',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			return ((argumentArray[0] & 0xF) % 10) + 10 * (((argumentArray[0] >> 4) & 0xF) % 10) + 100 * (((argumentArray[0] >> 8) & 0xF) % 10) + 1000 * (((argumentArray[0] >> 12) & 0xF) % 10) + 10_000 * (((argumentArray[0] >> 16) & 0xF) % 10) + 100_000 * (((argumentArray[0] >> 20) & 0xF) % 10) + 1_000_000 * (((argumentArray[0] >> 24) & 0xF) % 10) + 10_000_000 * (((argumentArray[0] >> 28) & 0xF) % 10) + 100_000_000 * (((argumentArray[0] >> 32) & 0xF) % 10) + 1_000_000_000 * (((argumentArray[0] >> 36) & 0xF) % 10);
+		},
+	},
+	toIntBCD12Digit: {
+		name: 'toIntBCD12Digit',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			return ((argumentArray[0] & 0xF) % 10) + 10 * (((argumentArray[0] >> 4) & 0xF) % 10) + 100 * (((argumentArray[0] >> 8) & 0xF) % 10) + 1000 * (((argumentArray[0] >> 12) & 0xF) % 10) + 10_000 * (((argumentArray[0] >> 16) & 0xF) % 10) + 100_000 * (((argumentArray[0] >> 20) & 0xF) % 10) + 1_000_000 * (((argumentArray[0] >> 24) & 0xF) % 10) + 10_000_000 * (((argumentArray[0] >> 28) & 0xF) % 10) + 100_000_000 * (((argumentArray[0] >> 32) & 0xF) % 10) + 1_000_000_000 * (((argumentArray[0] >> 36) & 0xF) % 10) + 10_000_000_000 * (((argumentArray[0] >> 40) & 0xF) % 10) + 100_000_000_000 * (((argumentArray[0] >> 44) & 0xF) % 10);
+		},
+	},
 	toUtf8: {
 		name: 'binToString',
 		argsType: [enums_1.ExeType.BIN],
