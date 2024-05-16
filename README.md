@@ -327,11 +327,11 @@
 - toInt32
     - RET: <NUM>
     - ATR: <NUM>
-		- convert to signed 32bit integer
+    - convert to signed 32bit integer
 - toInt32LE
     - RET: <NUM>
     - ATR: <NUM>
-		- convert to signed 32bit integer, little endian
+    - convert to signed 32bit integer, little endian
 - toFloat
     - RET: <NUM>
     - ATR: <NUM>
@@ -341,37 +341,37 @@
     - ATR: <NUM>
     - convert to 32bit float, little endian order
 - toDouble
-		- RET: <NUM>
-		- ATR: <NUM>
-		- convert to 64bit float
+    - RET: <NUM>
+    - ATR: <NUM>
+    - convert to 64bit float
 - toDoubleLE
-		- RET: <NUM>
-		- ATR: <NUM>
-		- convert to 64bit float, little endian order
+    - RET: <NUM>
+    - ATR: <NUM>
+    - convert to 64bit float, little endian order
 - toIntBCD2Digit
-		- RET: <NUM>
-		- ATR: <NUM>
-		- convert to integer from 2 digit BCD (8bit number)
+    - RET: <NUM>
+    - ATR: <NUM>
+    - convert to integer from 2 digit BCD (8bit number)
 - toIntBCD4Digit
-		- RET: <NUM>
-		- ATR: <NUM>
-		- convert to integer from 4 digit BCD (16bit number)
+    - RET: <NUM>
+    - ATR: <NUM>
+    - convert to integer from 4 digit BCD (16bit number)
 - toIntBCD6Digit
-		- RET: <NUM>
-		- ATR: <NUM>
-		- convert to integer from 6 digit BCD (24bit number)
+    - RET: <NUM>
+    - ATR: <NUM>
+    - convert to integer from 6 digit BCD (24bit number)
 - toIntBCD8Digit
-		- RET: <NUM>
-		- ATR: <NUM>
-		- convert to integer from 8 digit BCD (32bit number)
+    - RET: <NUM>
+    - ATR: <NUM>
+    - convert to integer from 8 digit BCD (32bit number)
 - toIntBCD10Digit
-		- RET: <NUM>
-		- ATR: <NUM>
-		- convert to integer from 10 digit BCD (40bit number)
+    - RET: <NUM>
+    - ATR: <NUM>
+    - convert to integer from 10 digit BCD (40bit number)
 - toIntBCD12Digit
-		- RET: <NUM>
-		- ATR: <NUM>
-		- convert to integer from 12 digit BCD (48bit number)
+    - RET: <NUM>
+    - ATR: <NUM>
+    - convert to integer from 12 digit BCD (48bit number)
 - toUtf8
     - RET: <NUM>
     - ATR: <ANY>
@@ -391,3 +391,7 @@
     - RET: <STRING>
     - ATR: <STRING>
     - std conversion
+- toMBUSManufacturerID
+		- RET: <STRING>
+		- ATR: <NUM>
+		- convert 16bit number to MBUS Manufacturer ID

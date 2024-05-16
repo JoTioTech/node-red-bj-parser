@@ -207,6 +207,16 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return outMask;
 		},
 	},
+	toMBUSManufacturerID:{
+		name: 'toMBUSManufacturerID',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.STRING,
+		fun(argumentArray, variableMap) {
+			let number = argumentArray[0] & 0x7FFF;
+			let arr = [ (number>>10)+64,((number>>5)&31)+64,(number&31)+64];
+			return String.fromCharCode.apply(null, arr);
+		},
+	},
 	parsUTC_5b: {
 		name: 'parsUTC_5b',
 		argsType: [enums_1.ExeType.INT],
