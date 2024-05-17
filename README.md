@@ -10,34 +10,34 @@
 - **global scope** for rule name
 #### Attributes
 - name
-    - OPTIONAL; default: ""
-    - only for login purpose
-    - schema name
+		- OPTIONAL; default: ""
+		- only for login purpose
+		- schema name
 - version
-    - OPTIONAL; default: ""
-    - only for login purpose
-    - schema version
+		- OPTIONAL; default: ""
+		- only for login purpose
+		- schema version
 - schemaVersion
-    - OPTIONAL; default: "1.0"
-    - for future, currently not used
+		- OPTIONAL; default: "1.0"
+		- for future, currently not used
 - rule:
-    - see RULE
+		- see RULE
 #### Structure
 ```
 {
-    name: <STRING>,
-    version: <STRING>,
-    schemaVersion: <STRING>,
-    rule: <RULE>
+		name: <STRING>,
+		version: <STRING>,
+		schemaVersion: <STRING>,
+		rule: <RULE>
 }
 ```
 #### Example
 ```
 {
-    rule: {
-       A: ...,
-       B: ...
-    }
+		rule: {
+			 A: ...,
+			 B: ...
+		}
 }
 ```
 
@@ -46,32 +46,32 @@
 - base node structure responsible for part of incoming message
 #### Attributes
 - set
-    - see RULE.SET,
+		- see RULE.SET,
 - subParsing
-    - see RULE.SUBPARSING,
+		- see RULE.SUBPARSING,
 - valMask:
-    - OPTIONAL;
-    - mask for $val variable in next
+		- OPTIONAL;
+		- mask for $val variable in next
 - next: <RULE.NEXT>
-    - OPTIONAL; default: return $in
-    - define witch portion of *in_bin* will be returned from this rule
-    - VAR: $in, $val,  $len
+		- OPTIONAL; default: return $in
+		- define witch portion of *in_bin* will be returned from this rule
+		- VAR: $in, $val,	$len
 #### Structure
 ```
 <STRING-rule name>: {
-    set: <RULE.SET>,
-    subParsing: <RULE.SUBPARSING>,
-    valMask: <MASK_EXP>
-    next: <MASK_EXP>
+		set: <RULE.SET>,
+		subParsing: <RULE.SUBPARSING>,
+		valMask: <MASK_EXP>
+		next: <MASK_EXP>
 }
 ```
 #### Example
 ```
  A: {
-    set: ...,
-    subParsing: ...,
-    valMask:
-    next: ...
+		set: ...,
+		subParsing: ...,
+		valMask:
+		next: ...
 }
 ```
 
@@ -80,73 +80,73 @@
 - set parameters in *out_json*
 #### Attributes (in array element)
 - valMask
-    - WARN: Does not work, sometimes error of val not existing is thrown
-    - VAR: $in, $len
-    - mask for $val variable
+		- WARN: Does not work, sometimes error of val not existing is thrown
+		- VAR: $in, $len
+		- mask for $val variable
 - target
-    - path in *out_json*, where value will be written
+		- path in *out_json*, where value will be written
 - type
-    - OPTIONAL; default: use values from *action*, *val*
-    - list of available valu (multiple elements can be executed)
+		- OPTIONAL; default: use values from *action*, *val*
+		- list of available valu (multiple elements can be executed)
 - type.selector
-    - OPTIONAL; default: TRUE (works as else)
-    - VAR: $in, $val, $len
-    - if true, element will be executed
+		- OPTIONAL; default: TRUE (works as else)
+		- VAR: $in, $val, $len
+		- if true, element will be executed
 - type.action
-    - OPTIONAL; default: SET
-    - action performed on atribute in json
+		- OPTIONAL; default: SET
+		- action performed on atribute in json
 - type.val
-    - VAR: $in, $val, $len
-    - value for action
+		- VAR: $in, $val, $len
+		- value for action
 - single
-    - OPTIONAL; default: FALSE
-    - has meaning only if *type* is set
-    - if true, only fist selected value with executed
+		- OPTIONAL; default: FALSE
+		- has meaning only if *type* is set
+		- if true, only fist selected value with executed
 - action
-    - OPTIONAL; default: SET
-    - interpreted only if
-    - action performed on atribute in json
+		- OPTIONAL; default: SET
+		- interpreted only if
+		- action performed on atribute in json
 - val
-    - OPTIONAL; default: use values from *type*
-    - will be executed only if type is not set
-    - VAR: $in, $val, $len
-    - value for action
+		- OPTIONAL; default: use values from *type*
+		- will be executed only if type is not set
+		- VAR: $in, $val, $len
+		- value for action
 
 #### Structure
 ```
 {
-    valMask: <MASK_EXP>,
-    target: <JSON_PATH>,
-    single: <BOOL>,
-    type:
-    {
-        selector: <BOOL_EXP>,
-        action: <SET_ACTION_ENUM>,
-        val: <ANY_EXP>
-    }[],
-    action: <SET_ACTION_ENUM>,
-    val: <ANY_EXP>
+		valMask: <MASK_EXP>,
+		target: <JSON_PATH>,
+		single: <BOOL>,
+		type:
+		{
+				selector: <BOOL_EXP>,
+				action: <SET_ACTION_ENUM>,
+				val: <ANY_EXP>
+		}[],
+		action: <SET_ACTION_ENUM>,
+		val: <ANY_EXP>
 }[]
 ```
 #### Example
 ```
 [
-    {
-        valMask: "0(12 + 1)1(3)",
-        target: "perName",
-        type: [
-            {
-                selector: "@eql($val, 0)",
-                action: "SET",
-                val: "'INTERNAL'"
-            },
-            {
-                selector: "@eql($val, 1)",
-                action: "SET",
-                val: "'A'"
-            }
-        ]
-    }
+		{
+				valMask: "0(12 + 1)1(3)",
+				target: "perName",
+				type: [
+						{
+								selector: "@eql($val, 0)",
+								action: "SET",
+								val: "'INTERNAL'"
+						},
+						{
+								selector: "@eql($val, 1)",
+								action: "SET",
+								val: "'A'"
+						}
+				]
+		}
 ]
 ```
 
@@ -155,71 +155,71 @@
 - parse next part of *in_bin*
 #### Attributes (in array element)
 - valMask
-    - OPTIONAL
-    - VAR: $in, $i, $len
-    - mask for $val variable
+		- OPTIONAL
+		- VAR: $in, $i, $len
+		- mask for $val variable
 - selector
-    - OPTIONAL; default: TRUE (works as else)
-    - VAR: $in, $i, $val, $len
-    - if true, element will be executed
+		- OPTIONAL; default: TRUE (works as else)
+		- VAR: $in, $i, $val, $len
+		- if true, element will be executed
 - targetRule
-    - rule, that will be executed
+		- rule, that will be executed
 - chroot
-    - OPTIONAL; default: ""
-    - VAR: $i, $val
-    - path to new root path in *out_json* in *sub rule*
+		- OPTIONAL; default: ""
+		- VAR: $i, $val
+		- path to new root path in *out_json* in *sub rule*
 - subMask
-    - binary that will be passed to *sub rule*
-    - VAR: $in, $i, $len
+		- binary that will be passed to *sub rule*
+		- VAR: $in, $i, $len
 - newIn
-    - OPTIONAL; default: $ret
-    - VAR: $in, $i, $len, $ret, $rvser
-    - binary that will become new $in variable
+		- OPTIONAL; default: $ret
+		- VAR: $in, $i, $len, $ret, $rvser
+		- binary that will become new $in variable
 - repeatMax
-    - OPTIONAL; default: InF
-    - skip this subrule, if number of times **this subrule** was already called is greater or equal of this value (in this subparsing, in this call)
+		- OPTIONAL; default: InF
+		- skip this subrule, if number of times **this subrule** was already called is greater or equal of this value (in this subparsing, in this call)
 - repeatMaxGlob
-    - OPTIONAL; default: InF
-    - skip this subrule, if number of times **any subrule** was already called is greater or equal of this value (in this subparsing, in this call)
+		- OPTIONAL; default: InF
+		- skip this subrule, if number of times **any subrule** was already called is greater or equal of this value (in this subparsing, in this call)
 - repeat
-    - OPTIONAL; default: FALSE (if repeatMax or repeatMaxGlob are set)
-    - do not break after subrule is executed
+		- OPTIONAL; default: FALSE (if repeatMax or repeatMaxGlob are set)
+		- do not break after subrule is executed
 
 #### Structure
 ```
 {
-    valMask: <MASK_EXP>,
-    selector: <BOOL_EXP>,
-    targetRule: <STRING-rule name>,
-    chroot: <JSON_PATH>,
-    subMask: <MASK_EXP>,
-    newIn: <BIN_EXP>,
-    repeatMax: <INT>,
-    repeatMaxGlob: <INT>,
-    repeat: <BOOL>
+		valMask: <MASK_EXP>,
+		selector: <BOOL_EXP>,
+		targetRule: <STRING-rule name>,
+		chroot: <JSON_PATH>,
+		subMask: <MASK_EXP>,
+		newIn: <BIN_EXP>,
+		repeatMax: <INT>,
+		repeatMaxGlob: <INT>,
+		repeat: <BOOL>
 }[]
 ```
 #### Example
 ```
 [
-    {
-        valMask: "0(8)1(4)",
-        selector: "@eql($val, 2)",
-        subMask: "0(16)1($len)",
-        newIn: "@maskB('1(16)', $in) : $ret",
-        targetRule: "parsUTC_root",
-        chroot: "timestamp",
-        repeat: true,
-        repeatMax: 1
-    },
-    {
-        valMask: "1(8)",
-        selector: "@eql($val, 0x01)",
-        subMask: "0(16)1($len)",
-        newIn: "$rvsub : $ret",
-        targetRule: "temp",
-        repeat: false
-    }
+		{
+				valMask: "0(8)1(4)",
+				selector: "@eql($val, 2)",
+				subMask: "0(16)1($len)",
+				newIn: "@maskB('1(16)', $in) : $ret",
+				targetRule: "parsUTC_root",
+				chroot: "timestamp",
+				repeat: true,
+				repeatMax: 1
+		},
+		{
+				valMask: "1(8)",
+				selector: "@eql($val, 0x01)",
+				subMask: "0(16)1($len)",
+				newIn: "$rvsub : $ret",
+				targetRule: "temp",
+				repeat: false
+		}
 ]
 ```
 
@@ -245,38 +245,38 @@
 
 ## SET_ACTION_ENUM
 - SET
-    - create new atribute (if exist error)
+		- create new atribute (if exist error)
 - ADD
-    - += (if do not exist, init whit 0)
+		- += (if do not exist, init whit 0)
 - APPEND
-    - add element to list (if do not exist, init with [])
+		- add element to list (if do not exist, init with [])
 
 
 ## Variable
 - val
-    - type: int
-    - default: -1
-    - resulting integer from valMask atribute
+		- type: int
+		- default: -1
+		- resulting integer from valMask atribute
 - len
-    - type: int
-    - deprecated
-    - OLD: ~~number of bits in *in_bin*~~
-    - NEW: -1
+		- type: int
+		- deprecated
+		- OLD: ~~number of bits in *in_bin*~~
+		- NEW: -1
 - in
-    - type: binary
-    - full binary in current rule
-    - will be rewritten after *sub rule* **completely finish** (in will become value from newIn atr)
+		- type: binary
+		- full binary in current rule
+		- will be rewritten after *sub rule* **completely finish** (in will become value from newIn atr)
 - i
-    - type: int
-    - number of *sub rule* are already **complete finished** in current rule
-    - counting from 0
+		- type: int
+		- number of *sub rule* are already **complete finished** in current rule
+		- counting from 0
 - ret
-    - type: binary
-    - value returned from *sub rule* from next atribute
+		- type: binary
+		- value returned from *sub rule* from next atribute
 - rvsub
-    - type: binary
-    - **inverse** binary mask from selector atribute
-    - TODO: add it (not implemented)
+		- type: binary
+		- **inverse** binary mask from selector atribute
+		- TODO: add it (not implemented)
 
 ## StD Variable
 - true: true (boolean)
@@ -286,112 +286,112 @@
 
 ## Operators
 - \+, \-, \*, \\
-    - std. math operators (not for string)
+		- std. math operators (not for string)
 - (...)
-    - std. bracket
+		- std. bracket
 - &, |
-    - **not implemented**
-    - bin and, or
+		- **not implemented**
+		- bin and, or
 - :
-    - binary concat
+		- binary concat
 - &&, ||
-    - std bool operators
+		- std bool operators
 - ==, >, >=, <, <=
-    - std bool operators
+		- std bool operators
 
 ## Functions
 - eql
-    - RET: <BOOL>
-    - ATR: <ANY>, <ANY>
-    - js: ===
+		- RET: <BOOL>
+		- ATR: <ANY>, <ANY>
+		- js: ===
 - more
-    - RET: <BOOL>
-    - ATR: <ANY>, <ANY>
-    - js: >
+		- RET: <BOOL>
+		- ATR: <ANY>, <ANY>
+		- js: >
 - less
-    - RET: <BOOL>
-    - ATR: <ANY>, <ANY>
-    - js: <
+		- RET: <BOOL>
+		- ATR: <ANY>, <ANY>
+		- js: <
 - toBool
-    - RET: <BOOL>
-    - ATR: <ANY>
-    - if empty or 0 => false, else true
+		- RET: <BOOL>
+		- ATR: <ANY>
+		- if empty or 0 => false, else true
 - toInt16
-    - RET: <NUM>
-    - ATR: <NUM>
-    - convert to signed 16bit integer
+		- RET: <NUM>
+		- ATR: <NUM>
+		- convert to signed 16bit integer
 - toInt16LE
-    - RET: <NUM>
-    - ATR: <NUM>
-    - convert to signed 16bit integer, little endian
+		- RET: <NUM>
+		- ATR: <NUM>
+		- convert to signed 16bit integer, little endian
 - toInt32
-    - RET: <NUM>
-    - ATR: <NUM>
-    - convert to signed 32bit integer
+		- RET: <NUM>
+		- ATR: <NUM>
+		- convert to signed 32bit integer
 - toInt32LE
-    - RET: <NUM>
-    - ATR: <NUM>
-    - convert to signed 32bit integer, little endian
+		- RET: <NUM>
+		- ATR: <NUM>
+		- convert to signed 32bit integer, little endian
 - toFloat
-    - RET: <NUM>
-    - ATR: <NUM>
-    - convert to 32bit float
+		- RET: <NUM>
+		- ATR: <NUM>
+		- convert to 32bit float
 - toFloatLE
-    - RET: <NUM>
-    - ATR: <NUM>
-    - convert to 32bit float, little endian order
-- toDouble
-    - RET: <NUM>
-    - ATR: <NUM>
-    - convert to 64bit float
-- toDoubleLE
-    - RET: <NUM>
-    - ATR: <NUM>
-    - convert to 64bit float, little endian order
+		- RET: <NUM>
+		- ATR: <NUM>
+		- convert to 32bit float, little endian order
 - toIntBCD2Digit
-    - RET: <NUM>
-    - ATR: <NUM>
-    - convert to integer from 2 digit BCD (8bit number)
+		- RET: <NUM>
+		- ATR: <NUM>
+		- convert to integer from 2 digit BCD (8bit number)
 - toIntBCD4Digit
-    - RET: <NUM>
-    - ATR: <NUM>
-    - convert to integer from 4 digit BCD (16bit number)
+		- RET: <NUM>
+		- ATR: <NUM>
+		- convert to integer from 4 digit BCD (16bit number)
 - toIntBCD6Digit
-    - RET: <NUM>
-    - ATR: <NUM>
-    - convert to integer from 6 digit BCD (24bit number)
+		- RET: <NUM>
+		- ATR: <NUM>
+		- convert to integer from 6 digit BCD (24bit number)
 - toIntBCD8Digit
-    - RET: <NUM>
-    - ATR: <NUM>
-    - convert to integer from 8 digit BCD (32bit number)
+		- RET: <NUM>
+		- ATR: <NUM>
+		- convert to integer from 8 digit BCD (32bit number)
 - toIntBCD10Digit
-    - RET: <NUM>
-    - ATR: <NUM>
-    - convert to integer from 10 digit BCD (40bit number)
+		- RET: <NUM>
+		- ATR: <NUM>
+		- convert to integer from 10 digit BCD (40bit number)
 - toIntBCD12Digit
-    - RET: <NUM>
-    - ATR: <NUM>
-    - convert to integer from 12 digit BCD (48bit number)
+		- RET: <NUM>
+		- ATR: <NUM>
+		- convert to integer from 12 digit BCD (48bit number)
 - toUtf8
-    - RET: <NUM>
-    - ATR: <ANY>
-    - convert bin to string (if binary do not have whole number of bits pass **end** with zeros)
+		- RET: <NUM>
+		- ATR: <ANY>
+		- convert bin to string (if binary do not have whole number of bits pass **end** with zeros)
 - mask
-    - RET: <NUM>
-    - ATR: <MASK_EXP>, <BIN>
+		- RET: <NUM>
+		- ATR: <MASK_EXP>, <BIN>
+		- apply mask to binary and returns number
 - maskB
-    - RET: <BIN>
-    - ATR: <MASK_EXP>, <BIN>
+		- RET: <BIN>
+		- ATR: <MASK_EXP>, <BIN>
+		- apply mask to binary and returns binary
 - getAtr
-    - RET: <ANY>
-    - ATR: <JSON_PATH>
-    - **not implemented**
-    - get atribute from *out_json*
-- parsUTC_5b
-    - RET: <STRING>
-    - ATR: <STRING>
-    - std conversion
+		- RET: <ANY>
+		- ATR: <JSON_PATH>
+		- **not implemented**
+		- get atribute from *out_json*
+- parseUTC_5b
+		- RET: <STRING>
+		- ATR: <STRING>
+		- std conversion
 - toMBUSManufacturerID
 		- RET: <STRING>
 		- ATR: <NUM>
 		- convert 16bit number to MBUS Manufacturer ID
+- toHex
+		- RET: <STRING>
+		- ATR: <MASK_EXP> <BIN>
+		- convert binary in ranges specified by mask to hex string
+		- WARNING: alway pick length in mask divisible by 8
+

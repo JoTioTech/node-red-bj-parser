@@ -106,31 +106,6 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return f;
 		},
 	},
-	toDouble: {
-		name: 'toDouble',
-		argsType: [enums_1.ExeType.INT, enums_1.ExeType.INT],
-		retType: enums_1.ExeType.FLOAT,
-		fun(argumentArray, variableMap) {
-			const sign = argumentArray[0] >>> 63 === 0 ? 1 : -1;
-			const e = (argumentArray[0] >>> 52) & 0x7FF;
-			const m = e === 0 ? (argumentArray[0] & 0x7FF_FFFF_FFFF_F) << 1 : (argumentArray[0] & 0x7FF_FFFF_FFFF_F) | 0x800_00_00_00_00;
-			const f = sign * m * 2 ** (e - 1075);
-			return f;
-		},
-	},
-	toDoubleLE: {
-		name: 'toDoubleLE',
-		argsType: [enums_1.ExeType.INT, enums_1.ExeType.INT],
-		retType: enums_1.ExeType.FLOAT,
-		fun(argumentArray, variableMap) {
-			const bigEndian = ((argumentArray[0] & 0xFF) << 56) | ((argumentArray[0] & 0xFF_00) << 40) | ((argumentArray[0] & 0xFF_00_00) << 24) | ((argumentArray[0] & 0xFF_00_00_00) << 8) | ((argumentArray[0] & 0xFF_00_00_00_00) >> 8) | ((argumentArray[0] & 0xFF_00_00_00_00_00) >> 24) | (argumentArray[0] >> 40) | ((argumentArray[0] >> 56) & 0xFF);
-			const sign = bigEndian >>> 63 === 0 ? 1 : -1;
-			const e = (bigEndian >>> 52) & 0x7FF;
-			const m = e === 0 ? (bigEndian & 0x7FF_FFFF_FFFF_F) << 1 : (bigEndian & 0x7FF_FFFF_FFFF_F) | 0x800_00_00_00_00;
-			const f = sign * m * 2 ** (e - 1075);
-			return f;
-		}
-	},
 	toIntBCD2Digit: {
 		name: 'toIntBCD2Digit',
 		argsType: [enums_1.ExeType.INT],
@@ -180,6 +155,23 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return ((argumentArray[0] & 0xF) % 10) + 10 * (((argumentArray[0] >> 4) & 0xF) % 10) + 100 * (((argumentArray[0] >> 8) & 0xF) % 10) + 1000 * (((argumentArray[0] >> 12) & 0xF) % 10) + 10_000 * (((argumentArray[0] >> 16) & 0xF) % 10) + 100_000 * (((argumentArray[0] >> 20) & 0xF) % 10) + 1_000_000 * (((argumentArray[0] >> 24) & 0xF) % 10) + 10_000_000 * (((argumentArray[0] >> 28) & 0xF) % 10) + 100_000_000 * (((argumentArray[0] >> 32) & 0xF) % 10) + 1_000_000_000 * (((argumentArray[0] >> 36) & 0xF) % 10) + 10_000_000_000 * (((argumentArray[0] >> 40) & 0xF) % 10) + 100_000_000_000 * (((argumentArray[0] >> 44) & 0xF) % 10);
 		},
 	},
+	toHex: {
+		name: 'toHex',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
+		retType: enums_1.ExeType.STRING,
+		fun(argumentArray, variableMap) {
+			const struct =  (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			let str = '';
+			let endIndex = struct.ranges[0].iter.start + struct.len-8;
+			let byte = 0;
+			for(let i = struct.ranges[0].iter.start-8; i < endIndex; i+=8){
+				byte = 0;
+				for (let j = 0; j < 8; j++) { byte = byte << 1; byte += struct.ranges[0].iter.base.data[i+j]; }
+				str += byte.toString(16);
+			}
+			return str;
+		},
+	},
 	toUtf8: {
 		name: 'binToString',
 		argsType: [enums_1.ExeType.BIN],
@@ -217,8 +209,8 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return String.fromCharCode.apply(null, arr);
 		},
 	},
-	parsUTC_5b: {
-		name: 'parsUTC_5b',
+	parseUTC_5b: {
+		name: 'parseUTC_5b',
 		argsType: [enums_1.ExeType.INT],
 		retType: enums_1.ExeType.STRING,
 		fun(argumentArray, variableMap) {
