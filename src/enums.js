@@ -6,19 +6,21 @@ var ExeType;
     ExeType[ExeType["ANY"] = 0] = "ANY";
     ExeType[ExeType["INT"] = 1] = "INT";
     ExeType[ExeType["BIN"] = 2] = "BIN";
-    ExeType[ExeType["BOLL"] = 3] = "BOLL";
+    ExeType[ExeType["BOOL"] = 3] = "BOOL";
     ExeType[ExeType["STRING"] = 4] = "STRING";
     ExeType[ExeType["PATH"] = 5] = "PATH";
     ExeType[ExeType["FLOAT"] = 6] = "FLOAT";
+		ExeType[ExeType["JSON"] = 7] = "JSON";
 })(ExeType = exports.ExeType || (exports.ExeType = {}));
 exports.ExeTypeReverse = [
     "ANY",
     "INT",
     "BIN",
-    "BOLL",
+    "BOOL",
     "STRING",
     "PATH",
 		"FLOAT",
+		"JSON",
 ];
 var SET_ACTION_ENUM;
 (function (SET_ACTION_ENUM) {

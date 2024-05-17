@@ -4,12 +4,13 @@ exports.EXP_FUNCTION_ENUM = void 0;
 const bin_1 = require('./bin');
 const enums_1 = require('./enums');
 const evaluators_1 = require('./evaluators');
+const mbus_1 = require('./mbus');
 
 exports.EXP_FUNCTION_ENUM = Object.freeze({
 	eql: {
 		name: 'eql',
 		argsType: [enums_1.ExeType.ANY, enums_1.ExeType.ANY],
-		retType: enums_1.ExeType.BOLL,
+		retType: enums_1.ExeType.BOOL,
 		fun(argumentArray, variableMap) {
 			return argumentArray[0] === argumentArray[1];
 		},
@@ -17,7 +18,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 	more: {
 		name: 'more',
 		argsType: [enums_1.ExeType.ANY, enums_1.ExeType.ANY],
-		retType: enums_1.ExeType.BOLL,
+		retType: enums_1.ExeType.BOOL,
 		fun(argumentArray, variableMap) {
 			return argumentArray[0] > argumentArray[1];
 		},
@@ -25,7 +26,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 	less: {
 		name: 'less',
 		argsType: [enums_1.ExeType.ANY, enums_1.ExeType.ANY],
-		retType: enums_1.ExeType.BOLL,
+		retType: enums_1.ExeType.BOOL,
 		fun(argumentArray, variableMap) {
 			return argumentArray[0] < argumentArray[1];
 		},
@@ -33,7 +34,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 	toBool: {
 		name: 'toBool',
 		argsType: [enums_1.ExeType.ANY],
-		retType: enums_1.ExeType.BOLL,
+		retType: enums_1.ExeType.BOOL,
 		fun(argumentArray, variableMap) {
 			return Boolean(argumentArray[0]);
 		},
@@ -162,15 +163,37 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		fun(argumentArray, variableMap) {
 			const struct =  (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
 			let str = '';
-			let endIndex = struct.ranges[0].iter.start + struct.len-8;
+			let endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
-			for(let i = struct.ranges[0].iter.start-8; i < endIndex; i+=8){
+			for(let i = struct.ranges[0].iter.start; i < endIndex; i+=8){
 				byte = 0;
 				for (let j = 0; j < 8; j++) { byte = byte << 1; byte += struct.ranges[0].iter.base.data[i+j]; }
 				str += byte.toString(16);
 			}
 			return str;
 		},
+	},
+	parseMBUS: {
+		name : 'parseMBUS',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
+		retType: enums_1.ExeType.JSON,
+		fun(argumentArray, variableMap) {
+			const struct =  (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			let str = '';
+			let endIndex = struct.ranges[0].iter.start + struct.len;
+			let byte = 0;
+			var array = new Uint8Array(struct.len >> 3);
+			for(let i = struct.ranges[0].iter.start; i < endIndex; i+=8){
+				byte = 0;
+				for (let j = 0; j < 8; j++) { byte = byte << 1; byte += struct.ranges[0].iter.base.data[i+j]; }
+				str += byte.toString(16);
+
+				array[(i-1) >> 3] = byte;
+			}
+			const data = (0, mbus_1.mbusDecoder)(array);
+			return data;
+		}
+
 	},
 	toUtf8: {
 		name: 'binToString',
@@ -197,16 +220,6 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		fun(argumentArray, variableMap) {
 			const outMask = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
 			return outMask;
-		},
-	},
-	toMBUSManufacturerID:{
-		name: 'toMBUSManufacturerID',
-		argsType: [enums_1.ExeType.INT],
-		retType: enums_1.ExeType.STRING,
-		fun(argumentArray, variableMap) {
-			let number = argumentArray[0] & 0x7FFF;
-			let arr = [ (number>>10)+64,((number>>5)&31)+64,(number&31)+64];
-			return String.fromCharCode.apply(null, arr);
 		},
 	},
 	parseUTC_5b: {
