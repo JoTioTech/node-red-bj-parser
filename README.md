@@ -421,9 +421,15 @@
 - toHex
 	- RET: <STRING>
 	- ATR: <MASK_EXP> <BIN>
-	- convert binary in ranges specified by mask to hex string, !!! alway pick length in mask divisible by 8
+	- convert binary in ranges specified by mask to hex string
+	- WARN: alway pick length in mask divisible by 8
 - parseMBUS
 	- RET: <STRING>
 	- ATR: <MASK_EXP> <BIN>
 	- parse given part of message as MBUS message, only long frame is supported and header must be included
+- toAscii
+	- RET: <STRING>
+	- ATR: <MASK_EXP> <BIN>
+	- convert binary in ranges specified by mask to ascii string
+	- WARN: alway pick length in mask divisible by 8
 

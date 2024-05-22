@@ -179,21 +179,34 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		retType: enums_1.ExeType.JSON,
 		fun(argumentArray, variableMap) {
 			const struct =  (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
-			let str = '';
 			let endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
 			var array = new Uint8Array(struct.len >> 3);
 			for(let i = struct.ranges[0].iter.start; i < endIndex; i+=8){
 				byte = 0;
 				for (let j = 0; j < 8; j++) { byte = byte << 1; byte += struct.ranges[0].iter.base.data[i+j]; }
-				str += byte.toString(16);
-
 				array[(i-1) >> 3] = byte;
 			}
 			const data = (0, mbus_1.mbusDecoder)(array);
 			return data;
 		}
-
+	},
+	toAscii: {
+		name: 'toAscii',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
+		retType: enums_1.ExeType.STRING,
+		fun(argumentArray, variableMap) {
+			const struct =  (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			let str = '';
+			let endIndex = struct.ranges[0].iter.start + struct.len;
+			let byte = 0;
+			for(let i = struct.ranges[0].iter.start; i < endIndex; i+=8){
+				byte = 0;
+				for (let j = 0; j < 8; j++) { byte = byte << 1; byte += struct.ranges[0].iter.base.data[i+j]; }
+				str += String.fromCharCode(byte);
+			}
+			return str;
+		},
 	},
 	toUtf8: {
 		name: 'binToString',
