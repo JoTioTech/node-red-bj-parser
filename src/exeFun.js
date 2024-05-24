@@ -181,11 +181,11 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			const struct =  (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
 			let endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
-			var array = new Uint8Array(struct.len >> 3);
+			var array = []
 			for(let i = struct.ranges[0].iter.start; i < endIndex; i+=8){
 				byte = 0;
 				for (let j = 0; j < 8; j++) { byte = byte << 1; byte += struct.ranges[0].iter.base.data[i+j]; }
-				array[(i-1) >> 3] = byte;
+				array.push(byte);
 			}
 			const data = (0, mbus_1.mbusDecoder)(array);
 			return data;
