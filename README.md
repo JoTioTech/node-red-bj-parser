@@ -14,14 +14,11 @@
 - name
 	- OPTIONAL; default: ""
 	- only for login purpose
-	- schema name
 - version
 	- OPTIONAL; default: ""
 	- only for login purpose
-	- schema version
 - schemaVersion
 	- OPTIONAL; default: "1.0"
-	- for future, currently not used
 - rule:
 		- see RULE
 

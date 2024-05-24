@@ -18,6 +18,11 @@ module.exports = function (RED) {
 			const parser = new parserModule.default(schema, parserConfig);
 
 			message_.payload = parser.runHexAndWrap(stringHex);
+			message_.payload.schema_info = {
+				"name" : schema.name,
+				"version" : schema.version,
+				"schema_version" : schema.schemaVersion
+			};
 			this.send(message_);
 		});
 	}
