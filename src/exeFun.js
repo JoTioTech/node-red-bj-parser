@@ -178,6 +178,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
 		retType: enums_1.ExeType.JSON,
 		fun(argumentArray, variableMap) {
+			console.log(argumentArray);
 			const struct =  (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
 			let endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
@@ -187,7 +188,9 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 				for (let j = 0; j < 8; j++) { byte = byte << 1; byte += struct.ranges[0].iter.base.data[i+j]; }
 				array.push(byte);
 			}
+			console.log("got there ");
 			const data = (0, mbus_1.mbusDecoder)(array);
+			console.log(data);
 			return data;
 		}
 	},

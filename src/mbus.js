@@ -1,5 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+'use strict';
+Object.defineProperty(exports, '__esModule', {value: true});
 exports.mbusDecoder = void 0;
 /**
  * Tmbus JavaScript Library v1.0.0
@@ -201,6 +201,7 @@ function ba2bcd(a, x) {
 	}
 
 	if (!x && e) {
+		console.log('ERRR');
 		throw s;
 	}
 
@@ -314,6 +315,7 @@ function mbusDecoder(a) {
 	}
 
 	function er(s) {
+		console.log('ERR');
 		throw (s || 'Wrong frame length') + ', pos ' + n;
 	}
 
@@ -464,7 +466,7 @@ function mbusDecoder(a) {
 		S[6] + '(meter side)',
 		'Wired Adapter'];
 	const fD = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 3, 4, 5, 6, 7, 8, 9];
-	const vD = [0,1,2,3,10,5,22,7,8,11,12,13,14,15,16,17,27,27,27,27,23,6,18,19,20,21,24,25,26,28,28,28,29,30,31,31,31,32,33,33,34,35,36,37,37,37,37,37,38,39,40,41,38,38,42,43,44];
+	const vD = [0, 1, 2, 3, 10, 5, 22, 7, 8, 11, 12, 13, 14, 15, 16, 17, 27, 27, 27, 27, 23, 6, 18, 19, 20, 21, 24, 25, 26, 28, 28, 28, 29, 30, 31, 31, 31, 32, 33, 33, 34, 35, 36, 37, 37, 37, 37, 37, 38, 39, 40, 41, 38, 38, 42, 43, 44];
 	const vFunction = ['Instantaneous', 'Maximum', 'Minimum', 'During error state'];
 
 	function i2fu(i) {
@@ -803,7 +805,8 @@ function mbusDecoder(a) {
 			];
 		let b = m[t]; let
 			i = 2;
-		for (; isA(b[0]); n &= 0xF ^ 1 << i, b = d >> i-- & 1 ? (ln(b) < 1 ? O : b[1]) : b[0]) {}
+		for (; isA(b[0]);
+			n &= 0xF ^ 1 << i, b = d >> i-- & 1 ? (ln(b) <= 1 ? O : b[1]) : b[0]) {}
 
 		deV(v, b, n);
 	}
@@ -948,7 +951,7 @@ function mbusDecoder(a) {
 		}
 
 		v.value = t;
-		// v.rawValue = i; // NOTE: changed from  official
+		// V.rawValue = i; // NOTE: changed from  official
 		v.func = vFunction[f];
 		d >>= 6; f = d & 1; i = t = u = 0;
 		if (d & 2) {
@@ -966,8 +969,8 @@ function mbusDecoder(a) {
 		v.storage = f;
 		delete v.f;
 		delete v.e;
-		delete v.vif; // NOTE: changed from official
-		delete v.dif; // NOTE: changed from official
+		// delete v.vif; // NOTE: changed from official
+		// delete v.dif; // NOTE: changed from official
 	}
 
 	function pV() {
@@ -1065,6 +1068,7 @@ function unitConv(cfg, f) {
 		process: p,
 	};
 }
+
 exports.mbusDecoder = mbusDecoder;
 
 // # sourceMappingURL=mbus.js.map
