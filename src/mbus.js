@@ -35,8 +35,10 @@ function p10(n, e) {
 		}
 	}
 
-	let t = String(n); const b = (s ? s.charAt(0) == '-' : n < 0) ? 1 : 0; const
-		l = ln(t);
+	let t = String(n);
+	const b = (s ? s<0 : n < 0) ? 1 : 0;
+	const l = ln(t);
+
 	if (e > 0) {
 		t += sNc('0', e);
 	} else {
@@ -174,6 +176,7 @@ function ba2bcd(a, x) {
 			s += c;
 		} else {
 			e = 1, s += 'A-C EF'.charAt(c - 10);
+			console.log("got here2");
 		}
 	}
 
@@ -200,9 +203,8 @@ function ba2bcd(a, x) {
 		p(l);
 	}
 
-	if (!x && e) {
-		console.log('ERRR');
-		throw s;
+	if (!x && e) { // TODO: check this condition
+		return null;
 	}
 
 	return e ? s : r;
@@ -315,8 +317,9 @@ function mbusDecoder(a) {
 	}
 
 	function er(s) {
-		console.log('ERR');
-		throw (s || 'Wrong frame length') + ', pos ' + n;
+		console.log((s || 'Wrong frame length') + ', pos ' + n);
+		return false; // XXX
+
 	}
 
 	function i() {
@@ -943,6 +946,7 @@ function mbusDecoder(a) {
 
 			if (s) {
 				t = m ? (t.charAt(0) == '-' ? t.slice(1) : ('-' + t)) : -t;
+			console.log("got here3");
 			}
 
 			if (v.e) {
@@ -1005,7 +1009,6 @@ function mbusDecoder(a) {
 	}
 
 	r.fixed ? pF() : pV();
-	console.log(r);
 	return r;
 }
 

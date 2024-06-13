@@ -301,10 +301,12 @@
 - ret
 	- type: binary
 	- value returned from *sub rule* from next atribute
-- rvsub
-	- type: binary
-	- **inverse** binary mask from selector atribute
-	- TODO: add it (not implemented)
+- custom1, custom2, custom3
+	- type: int
+	- custom variables, can be set by setCustomVar function
+	- WARN as of 13.6. 2024 custom variables cannot be used to do operations while setting value only in masking of binary
+	- to access custom variable use `$custom1`, `$custom2`, `$custom3`
+
 
 ## StD Variable
 
@@ -429,4 +431,9 @@
 	- ATR: <MASK_EXP> <BIN>
 	- convert binary in ranges specified by mask to ascii string
 	- WARN: alway pick length in mask divisible by 8
+- setCustomVar
+	- RET: <INT>
+	- ATR: <STRING> <INT>
+	- set custom variable to given integer value
+	- as of 13.6 2024 only variables with names `custom1`, `custom2`, `custom3` are supported
 

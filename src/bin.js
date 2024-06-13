@@ -172,10 +172,17 @@ function concatIterator(list) {
     });
     return new Multi_iterator(ranges, acmLen);
 }
+
 exports.concatIterator = concatIterator;
-function expandMask(mask, executor, inverse) {
+function expandMask(mask, executor, inverse) { // NOTE: here mask is processed and expanded
     const parsedMask = [];
     executor.setVar("len", -1, enums_1.ExeType.INT);
+
+		executor.setVar("custom1", global.custom1, enums_1.ExeType.INT);
+		executor.setVar("custom2", global.custom2, enums_1.ExeType.INT);
+		executor.setVar("custom3", global.custom3, enums_1.ExeType.INT);
+
+
     while (mask.hasNext()) {
         mask.shiftWhitespace();
         const char = mask.next();
@@ -196,7 +203,7 @@ function expandMask(mask, executor, inverse) {
             repetition = executor.exec(mask, enums_1.ExeType.INT, ')');
             mask.popPairEnd();
         }
-        if (repetition === -1) {
+        if (repetition === -1) { // ???
             if (loadedSymbol) {
                 parsedMask.push({
                     len: -1,

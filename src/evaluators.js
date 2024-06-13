@@ -25,7 +25,19 @@ exports.STD_EXE_VAR_MAP = {
     null: {
         val: null,
         type: enums_1.ExeType.ANY
-    }
+    },
+		custom1: {
+				val: -1,
+				type: enums_1.ExeType.INT
+		},
+		custom2: {
+				val: -1,
+				type: enums_1.ExeType.INT
+		},
+		custom3: {
+				val: -1,
+				type: enums_1.ExeType.INT
+		},
 };
 class ExpEvaluator {
     constructor(varList) {
