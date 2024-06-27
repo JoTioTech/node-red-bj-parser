@@ -28,10 +28,10 @@ module.exports = function (RED) {
 			// if(message.payload.outJson.device_type == undefined) message.payload.outJson.device_type = "";
 			// if(message.payload.outJson.device_subtype == undefined) message.payload.outJson.device_subtype = "";
 
-			message.payload.schema_info = {
+			message.payload.schemaInfo = {
 				"name" : schema.name,
 				"version" : schema.version,
-				"schema_version" : schema.schemaVersion
+				"schemaVersion" : schema.schemaVersion
 			};
 			this.send(message);
 		});

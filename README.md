@@ -352,14 +352,34 @@
 	- RET: <NUM>
 	- ATR: <NUM>
 	- convert to signed 16bit integer
+- toUInt16LE
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to unsigned 16bit integer, little endian
 - toInt16LE
 	- RET: <NUM>
 	- ATR: <NUM>
 	- convert to signed 16bit integer, little endian
+- toInt24
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to signed 24bit integer
+- toUInt24LE
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to unsigned 24bit integer, little endian
+- toInt24LE
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to signed 24bit integer, little endian
 - toInt32
 	- RET: <NUM>
 	- ATR: <NUM>
 	- convert to signed 32bit integer
+- toUInt32LE
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to unsigned 32bit integer, little endian
 - toInt32LE
 	- RET: <NUM>
 	- ATR: <NUM>
@@ -426,6 +446,10 @@
 	- RET: <STRING>
 	- ATR: <MASK_EXP> <BIN>
 	- parse given part of message as MBUS message, only long frame is supported and header must be included
+- toMBUSManufacturerID
+  - RET: <STRING>
+	- ATR: <NUM>
+	- convert manufacturer ID to it's string form
 - toAscii
 	- RET: <STRING>
 	- ATR: <MASK_EXP> <BIN>
