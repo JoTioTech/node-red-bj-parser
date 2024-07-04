@@ -104,6 +104,11 @@ class ExpEvaluator {
                 });
             }
             else if (char === '$') {
+							// -- load in global variables here
+								// setVar("custom1", global.custom1, enums_1.ExeType.INT);
+								// setVar("custom2", global.custom2, enums_1.ExeType.INT);
+								// setVar("custom3", global.custom3, enums_1.ExeType.INT);
+
                 const resVal = this.evalVar(str);
                 root = this.insertIntoTree(root, {
                     priority: 0,
@@ -340,6 +345,9 @@ class ExpEvaluator {
             else
                 break;
         }
+			this.varList["custom1"].val = global.custom1;
+			this.varList["custom2"].val = global.custom2;
+			this.varList["custom3"].val = global.custom3;
         const varMeta = this.varList[fullName];
         if (!varMeta)
             throw Error(`Not a valid var name (${fullName})\n   Available names: ${Object.keys(this.varList)}`);
