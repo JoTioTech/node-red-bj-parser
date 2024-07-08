@@ -384,6 +384,14 @@
 	- RET: <NUM>
 	- ATR: <NUM>
 	- convert to signed 32bit integer, little endian
+- toFloat16
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to 16bit float
+- toFloat16LE
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to 16bit float, little endian order
 - toFloat
 	- RET: <NUM>
 	- ATR: <NUM>

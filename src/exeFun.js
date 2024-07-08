@@ -98,6 +98,32 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return bigEndian < 0x80_00_00 ? bigEndian : bigEndian - 0x1_00_00_00;
 		},
 	},
+	toFloat16: {
+		name: 'toFloat16',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.FLOAT,
+		fun(argumentArray, variableMap) {
+		 const bits = argumentArray[0];
+			const sign = bits >>> 15 === 0 ? 1 : -1;
+			const e = (bits >>> 10) & 0x1F;
+			const m = e === 0 ? (bits & 0x3_FF) << 1 : (bits & 0x3_FF) | 0x4_00;
+			const f = sign * m * 2 ** (e - 25);
+			return f;
+		},
+	},
+	toFloat16LE: {
+		name: 'toFloat16LE',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.FLOAT,
+		fun(argumentArray, variableMap) {
+		 const bits = ((argumentArray[0] & 0xFF) << 8) | (argumentArray[0] >> 8);
+			const sign = bits >>> 15 === 0 ? 1 : -1;
+			const e = (bits >>> 10) & 0x1F;
+			const m = e === 0 ? (bits & 0x3_FF) << 1 : (bits & 0x3_FF) | 0x4_00;
+			const f = sign * m * 2 ** (e - 25);
+			return f;
+		},
+	},
 	toFloat: {
 		name: 'toFloat',
 		argsType: [enums_1.ExeType.INT],
@@ -123,7 +149,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.INT],
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
-		return ((argumentArray[0] & 0xFF) << 24) | ((argumentArray[0] & 0xFF_00) << 8) | ((argumentArray[0] & 0xFF_00_00) >> 8) | ((argumentArray[0] >> 24) & 0xFF);
+			return ((argumentArray[0] & 0xFF) << 24) | ((argumentArray[0] & 0xFF_00) << 8) | ((argumentArray[0] & 0xFF_00_00) >> 8) | ((argumentArray[0] >> 24) & 0xFF);
 		},
 	},
 	toUInt24LE: { // Interpret number in arguments as little-endian
@@ -131,7 +157,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.INT],
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
-			return  ((argumentArray[0] & 0xFF) << 16) | (argumentArray[0] & 0xFF_00) | ((argumentArray[0] & 0xFF_00_00) >> 16);
+			return ((argumentArray[0] & 0xFF) << 16) | (argumentArray[0] & 0xFF_00) | ((argumentArray[0] & 0xFF_00_00) >> 16);
 		},
 	},
 	toFloat: {
@@ -173,7 +199,6 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
 			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF);
-
 		},
 	},
 	toIntBCD6Digit: {
@@ -181,7 +206,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.INT],
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
-			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10000 * ((argumentArray[0] >> 16) & 0xF) + 100000 * ((argumentArray[0] >> 20) & 0xF);
+			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10_000 * ((argumentArray[0] >> 16) & 0xF) + 100_000 * ((argumentArray[0] >> 20) & 0xF);
 		},
 	},
 	toIntBCD8Digit: {
@@ -189,7 +214,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.INT],
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
-			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10000 * ((argumentArray[0] >> 16) & 0xF) + 100000 * ((argumentArray[0] >> 20) & 0xF) + 1000000 * ((argumentArray[0] >> 24) & 0xF) + 10000000 * ((argumentArray[0] >> 28) & 0xF);
+			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10_000 * ((argumentArray[0] >> 16) & 0xF) + 100_000 * ((argumentArray[0] >> 20) & 0xF) + 1_000_000 * ((argumentArray[0] >> 24) & 0xF) + 10_000_000 * ((argumentArray[0] >> 28) & 0xF);
 		},
 	},
 	toIntBCD10Digit: {
@@ -197,7 +222,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.INT],
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
-			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10000 * ((argumentArray[0] >> 16) & 0xF) + 100000 * ((argumentArray[0] >> 20) & 0xF) + 1000000 * ((argumentArray[0] >> 24) & 0xF) + 10000000 * ((argumentArray[0] >> 28) & 0xF) + 100000000 * ((argumentArray[0] >> 32) & 0xF) + 1000000000 * ((argumentArray[0] >> 36) & 0xF);
+			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10_000 * ((argumentArray[0] >> 16) & 0xF) + 100_000 * ((argumentArray[0] >> 20) & 0xF) + 1_000_000 * ((argumentArray[0] >> 24) & 0xF) + 10_000_000 * ((argumentArray[0] >> 28) & 0xF) + 100_000_000 * ((argumentArray[0] >> 32) & 0xF) + 1_000_000_000 * ((argumentArray[0] >> 36) & 0xF);
 		},
 	},
 	toIntBCD12Digit: {
@@ -205,7 +230,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.INT],
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
-			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10000 * ((argumentArray[0] >> 16) & 0xF) + 100000 * ((argumentArray[0] >> 20) & 0xF) + 1000000 * ((argumentArray[0] >> 24) & 0xF) + 10000000 * ((argumentArray[0] >> 28) & 0xF) + 100000000 * ((argumentArray[0] >> 32) & 0xF) + 1000000000 * ((argumentArray[0] >> 36) & 0xF) + 10000000000 * ((argumentArray[0] >> 40) & 0xF) + 100000000000 * ((argumentArray[0] >> 44) & 0xF);
+			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10_000 * ((argumentArray[0] >> 16) & 0xF) + 100_000 * ((argumentArray[0] >> 20) & 0xF) + 1_000_000 * ((argumentArray[0] >> 24) & 0xF) + 10_000_000 * ((argumentArray[0] >> 28) & 0xF) + 100_000_000 * ((argumentArray[0] >> 32) & 0xF) + 1_000_000_000 * ((argumentArray[0] >> 36) & 0xF) + 10_000_000_000 * ((argumentArray[0] >> 40) & 0xF) + 100_000_000_000 * ((argumentArray[0] >> 44) & 0xF);
 		},
 	},
 	toHex: {
@@ -213,65 +238,78 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
 		retType: enums_1.ExeType.STRING,
 		fun(argumentArray, variableMap) {
-			const struct =  (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
-			let str = '';
-			let endIndex = struct.ranges[0].iter.start + struct.len;
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			let string_ = '';
+			const endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
-			for(let i = struct.ranges[0].iter.start; i < endIndex; i+=8){
+			for (let i = struct.ranges[0].iter.start; i < endIndex; i += 8) {
 				byte = 0;
-				for (let j = 0; j < 8; j++) { byte = byte << 1; byte += struct.ranges[0].iter.base.data[i+j]; }
-				str += byte.toString(16);
+				for (let index = 0; index < 8; index++) {
+					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
+				}
+
+				string_ += byte.toString(16);
 			}
-			return str;
+
+			return string_;
 		},
 	},
 	parseMBUS: {
-		name : 'parseMBUS',
+		name: 'parseMBUS',
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
 		retType: enums_1.ExeType.JSON,
 		fun(argumentArray, variableMap) {
-			const struct =  (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
-			let endIndex = struct.ranges[0].iter.start + struct.len;
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			const endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
-			var array = []
-			for(let i = struct.ranges[0].iter.start; i < endIndex; i+=8){
+			const array = [];
+			for (let i = struct.ranges[0].iter.start; i < endIndex; i += 8) {
 				byte = 0;
-				for (let j = 0; j < 8; j++) { byte = byte << 1; byte += struct.ranges[0].iter.base.data[i+j]; }
+				for (let index = 0; index < 8; index++) {
+					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
+				}
+
 				array.push(byte);
 			}
+
 			const data = (0, mbus_1.mbusDecoder)(array);
 			return data;
-		}
+		},
 	},
-	toMBUSManufacturerID:{
+	toMBUSManufacturerID: {
 		name: 'toMBUSManufacturerID',
 		argsType: [enums_1.ExeType.INT],
 		retType: enums_1.ExeType.STRING,
 		fun(argumentArray, variableMap) {
-			let number = argumentArray[0] & 0x7FFF;
-			let arr = [ (number>>10)+64,((number>>5)&31)+64,(number&31)+64];
-			return String.fromCharCode.apply(null, arr);
+			const number = argumentArray[0] & 0x7F_FF;
+			const array = [(number >> 10) + 64, ((number >> 5) & 31) + 64, (number & 31) + 64];
+			return String.fromCharCode.apply(null, array);
 		},
 	},
-	setCustomVar:{
+	setCustomVar: {
 		name: 'setCustomVar',
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.INT],
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray, variableMap) {
-			switch(argumentArray[0]){
-
-				case "custom1":
+			switch (argumentArray[0]) {
+				case 'custom1': {
 					global.custom1 = argumentArray[1];
 					break;
-				case "custom2":
+				}
+
+				case 'custom2': {
 					global.custom2 = argumentArray[1];
 					break;
-				case "custom3":
+				}
+
+				case 'custom3': {
 					global.custom3 = argumentArray[1];
 					break;
+				}
 			}
-				return argumentArray[1];
-			}
+
+			return argumentArray[1];
+		},
 	},
 
 	toAscii: {
@@ -279,16 +317,20 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
 		retType: enums_1.ExeType.STRING,
 		fun(argumentArray, variableMap) {
-			const struct =  (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
-			let str = '';
-			let endIndex = struct.ranges[0].iter.start + struct.len;
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			let string_ = '';
+			const endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
-			for(let i = struct.ranges[0].iter.start; i < endIndex; i+=8){
+			for (let i = struct.ranges[0].iter.start; i < endIndex; i += 8) {
 				byte = 0;
-				for (let j = 0; j < 8; j++) { byte = byte << 1; byte += struct.ranges[0].iter.base.data[i+j]; }
-				str += String.fromCharCode(byte);
+				for (let index = 0; index < 8; index++) {
+					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
+				}
+
+				string_ += String.fromCharCode(byte);
 			}
-			return str;
+
+			return string_;
 		},
 	},
 	toUtf8: {
@@ -328,4 +370,3 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 	},
 });
 // # sourceMappingURL=exeFun.js.map
-
