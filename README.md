@@ -277,6 +277,10 @@
 	- += (if do not exist, init whit 0)
 - APPEND
 	- add element to list (if do not exist, init with [])
+- NO_ACTION
+	- do nothing just evaluate val
+	- to be used with functions setting custom variables or working with arrays
+	- when NO_ACTION is used target doesn't have to be set if it is it will remain uninitialized
 
 
 ## Variable
@@ -468,4 +472,39 @@
 	- ATR: <STRING> <INT>
 	- set custom variable to given integer value
 	- as of 13.6 2024 only variables with names `custom1`, `custom2`, `custom3` are supported
-
+	- NOTE: as custom variables are internally stored in global scope they will not be cleared after each message
+- clearArray
+	- RET: <0>
+	- ATR: <STRING>
+	- clears given global array with given name
+	- NOTE: as arrays are internally stored in global scope they will not be cleared after each message
+- pushToArray
+	- RET: <0>
+	- ATR: <STRING> <ANY>
+	- push given value to global array with given name
+	- NOTE: as arrays are internally stored in global scope they will not be cleared after each message
+- loadLastArrayElementToCustomVar
+	- RET: <0>
+	- ATR: <STRING> <STRING>
+	- load last element of global array (name in first argument) with given name to custom variable
+	- element is removed from array
+	- NOTE: as arrays are internally stored in global scope they will not be cleared after each message
+	- NOTE: as of 13.6 2024 only variables with names `custom1`, `custom2`, `custom3` are supported
+- removeLastArrayElement
+	-	RET: <ANY>
+	- ATR: <STRING>
+	- returns last element in array and removes it from array
+	- NOTE: as arrays are internally stored in global scope they will not be cleared after each message
+- loadFirstArrayElementToCustomVar
+	- RET: <0>
+	- ATR: <STRING> <STRING>
+	- load first element of global array (name in first argument) with given name to custom variable
+	- element is removed from array
+	- NOTE: as arrays are internally stored in global scope they will not be cleared after each message
+	- if you are using arrays withing your parsing schema reset it right in the beginning as the array will not be cleared after each message
+	- NOTE: as of 13.6 2024 only variables with names `custom1`, `custom2`, `custom3` are supported
+- removeFirstArrayElement
+	-	RET: <ANY>
+	- ATR: <STRING>
+	- returns first element in given array and removes it from array
+	- NOTE: as arrays are internally stored in global scope they will not be cleared after each message

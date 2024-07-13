@@ -280,17 +280,107 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		name: 'toMBUSManufacturerID',
 		argsType: [enums_1.ExeType.INT],
 		retType: enums_1.ExeType.STRING,
-		fun(argumentArray, variableMap) {
+		fun(argumentArray) {
 			const number = argumentArray[0] & 0x7F_FF;
 			const array = [(number >> 10) + 64, ((number >> 5) & 31) + 64, (number & 31) + 64];
 			return String.fromCharCode.apply(null, array);
 		},
 	},
+	clearArray: {
+		name: 'clearArray',
+		argsType: [enums_1.ExeType.STRING],
+		retType: enums_1.ExeType.ANY,
+		fun(argumentArray) {
+			if (!global.arrays) global.arrays = {};
+			global.arrays[argumentArray[0]] = [];
+			return 0;
+		},
+	},
+	pushToArray: {
+		name: 'pushToArray',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.ANY],
+		retType: enums_1.ExeType.ARRAY,
+		fun(argumentArray) {
+			if (!global.arrays) global.arrays = {};
+			if (!global.arrays[argumentArray[0]]) global.arrays[argumentArray[0]] = [];
+			global.arrays[argumentArray[0]].push(argumentArray[1]);
+			return 0;
+
+		},
+	},
+	loadLastArrayElementToCustomVar: {
+		name: 'loadLastArrayElementToCustomVar',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.STRING],
+		retType: enums_1.ExeType.ANY,
+		fun(argumentArray) {
+			if (!global.arrays) global.arrays = {};
+			if (!global.arrays[argumentArray[0]]) global.arrays[argumentArray[0]] = [];
+			switch (argumentArray[1]) {
+				case 'custom1': {
+					global.custom1 =  global.arrays[argumentArray[0]].pop();
+					break;
+				}
+				case 'custom2': {
+					global.custom2 =  global.arrays[argumentArray[0]].pop();
+					break;
+				}
+				case 'custom3': {
+					global.custom3 =  global.arrays[argumentArray[0]].pop();
+					break;
+				}
+			}
+			return 0;
+		},
+	},
+	removeLastArrayElement : {
+		name: 'removeLastArrayElement',
+		argsType: [enums_1.ExeType.STRING],
+		retType: enums_1.ExeType.ANY,
+		fun(argumentArray) {
+			if (!global.arrays) global.arrays = {};
+			if (!global.arrays[argumentArray[0]]) global.arrays[argumentArray[0]] = [];
+					return  global.arrays[argumentArray[0]].pop();
+		},
+	},
+	loadFirstArrayElementToCustomVar: {
+		name: 'loadFirstArrayElementToCustomVar',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.STRING],
+		retType: enums_1.ExeType.ANY,
+		fun(argumentArray) {
+			if (!global.arrays) global.arrays = {};
+			if (!global.arrays[argumentArray[0]]) global.arrays[argumentArray[0]] = [];
+			switch (argumentArray[1]) {
+				case 'custom1': {
+					global.custom1 =  global.arrays[argumentArray[0]].shift();
+					break;
+				}
+				case 'custom2': {
+					global.custom2 =  global.arrays[argumentArray[0]].shift();
+					break;
+				}
+				case 'custom3': {
+					global.custom3 =  global.arrays[argumentArray[0]].shift();
+					break;
+				}
+			}
+			return 0;
+		},
+	},
+	removeFirstArrayElement : {
+		name: 'removeFirstArrayElement',
+		argsType: [enums_1.ExeType.STRING],
+		retType: enums_1.ExeType.ANY,
+		fun(argumentArray) {
+			if (!global.arrays) global.arrays = {};
+			if (!global.arrays[argumentArray[0]]) global.arrays[argumentArray[0]] = [];
+			return  global.arrays[argumentArray[0]].shift();
+		}
+	},
 	setCustomVar: {
 		name: 'setCustomVar',
-		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.INT],
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.ANY], // NOTE: test if this doesn't mess up anything else oritignaly was ExeType.INT
 		retType: enums_1.ExeType.ANY,
-		fun(argumentArray, variableMap) {
+		fun(argumentArray) {
 			switch (argumentArray[0]) {
 				case 'custom1': {
 					global.custom1 = argumentArray[1];

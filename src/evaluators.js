@@ -15,7 +15,7 @@ exports.STD_EXE_VAR_MAP = {
         type: enums_1.ExeType.BOLL
     },
     false: {
-        val: true,
+        val: false,
         type: enums_1.ExeType.BOLL
     },
     nan: {
