@@ -276,6 +276,29 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return data;
 		},
 	},
+	toIMEI: {
+		name: 'toIMEI',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
+		retType: enums_1.ExeType.STRING,
+		fun(argumentArray, variableMap) {
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			const endIndex = struct.ranges[0].iter.start + struct.len;
+			let byte = 0;
+			const array = [];
+			for (let i = struct.ranges[0].iter.start; i < endIndex; i += 8) {
+				byte = 0;
+				for (let index = 0; index < 8; index++) {
+					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
+				}
+				array.push(byte);
+			}
+			// convert byte array to IMEI String
+			let toReturn = '';
+			for(var i =0; i < array.length; i++)
+				toReturn = toReturn + array[i].toString().padStart(i==14 ? i :2, '0');
+			return toReturn;
+		},
+	},
 	toMBUSManufacturerID: {
 		name: 'toMBUSManufacturerID',
 		argsType: [enums_1.ExeType.INT],

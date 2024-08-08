@@ -458,6 +458,10 @@
 	- RET: <STRING>
 	- ATR: <MASK_EXP> <BIN>
 	- parse given part of message as MBUS message, only long frame is supported and header must be included
+- toIMEI
+  - RET: <STRING>
+	- ATR: <MASK_EXP> <BIN>
+	- interprets given sector as IMEI number
 - toMBUSManufacturerID
   - RET: <STRING>
 	- ATR: <NUM>
