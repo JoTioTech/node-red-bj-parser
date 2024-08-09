@@ -295,7 +295,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			// convert byte array to IMEI String
 			let toReturn = '';
 			for(var i =0; i < array.length; i++)
-				toReturn = toReturn + array[i].toString().padStart(i==14 ? 1 : 2, '0');
+				toReturn = toReturn + array[i].toString().padStart(i==array.length-1 ? 1 : 2, '0');
 			return toReturn;
 		},
 	},
