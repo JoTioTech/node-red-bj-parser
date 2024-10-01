@@ -445,6 +445,18 @@
 	- ATR: <JSON_PATH>
 	- **not implemented**
 	- get atribute from *out_json*
+- twoComplement2Byte
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to two complement 2 byte number
+- twoComplement3Byte
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to two complement 3 byte number
+- twoComplement4Byte
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to two complement 4 byte number
 - parseUTC_5b
 	- RET: <STRING>
 	- ATR: <STRING>

@@ -309,6 +309,30 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return String.fromCharCode.apply(null, array);
 		},
 	},
+	twoComplement4Byte: {
+		name: 'twoComplement4Byte',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray) {
+			return argumentArray[0] < 0x80_00_00_00 ? argumentArray[0] : argumentArray[0] - 0x1_00_00_00_00;
+		},
+	},
+	twoComplement3Byte: {
+		name: 'twoComplement3Byte',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray) {
+			return argumentArray[0] < 0x80_00_00 ? argumentArray[0] : argumentArray[0] - 0x1_00_00_00;
+		},
+	},
+	twoComplement2Byte: {
+		name: 'twoComplement2Byte',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray) {
+			return argumentArray[0] < 0x80_00 ? argumentArray[0] : argumentArray[0] - 0x1_00_00;
+		},
+	},
 	clearArray: {
 		name: 'clearArray',
 		argsType: [enums_1.ExeType.STRING],
