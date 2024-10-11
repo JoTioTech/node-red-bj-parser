@@ -305,11 +305,13 @@
 - ret
 	- type: binary
 	- value returned from *sub rule* from next atribute
-- custom1, custom2, custom3
+- user can define any custom variable
+	- WARN: responsible use is encouraged as they are stored in global scope - thus they will not be cleared by default after each message
+	- WARN: periodic clearing of them is recommended to avoid cluttering memory (use clearArray function)
+	- prefer use of common variables like `custom1`, `custom2`, `custom3`
 	- type: int
 	- custom variables, can be set by setCustomVar function
-	- WARN as of 13.6. 2024 custom variables cannot be used to do operations while setting value only in masking of binary
-	- to access custom variable use `$custom1`, `$custom2`, `$custom3`
+	- to access custom variable use `$<variable name>`,
 
 
 ## StD Variable
@@ -483,12 +485,6 @@
 	- ATR: <MASK_EXP> <BIN>
 	- convert binary in ranges specified by mask to ascii string
 	- WARN: alway pick length in mask divisible by 8
-- setCustomVar
-	- RET: <INT>
-	- ATR: <STRING> <INT>
-	- set custom variable to given integer value
-	- as of 13.6 2024 only variables with names `custom1`, `custom2`, `custom3` are supported
-	- NOTE: as custom variables are internally stored in global scope they will not be cleared after each message
 - clearArray
 	- RET: <0>
 	- ATR: <STRING>
@@ -499,13 +495,37 @@
 	- ATR: <STRING> <ANY>
 	- push given value to global array with given name
 	- NOTE: as arrays are internally stored in global scope they will not be cleared after each message
+
+
+## Custom variable functions
+WARN use with caution and responsibly
+
+- setCustomVar
+	- RET: <INT>
+	- ATR: <STRING> <INT>
+	- set custom variable to given integer value
+	- NOTE: as custom variables are internally stored in global scope they will not be cleared after each message
+- clearCustomVar
+	- RET: <0>
+	- ATR: <STRING>
+	- clear custom variable with given name
+	- NOTE: as custom variables are internally stored in global scope they will not be cleared after each message
+- clearCustomVariables
+	- RET: <0>
+	- ATR: <0>
+	- clear all custom variables
+	- NOTE: as custom variables are internally stored in global scope they will not be cleared after each message
+- getLength
+	- RET: <INT>
+	- ATR: <STRING> <STRING> <BIN>
+	- get length of binary with given mask (argument 1) applied, output is stored in custom variable with given name (argument 2)
+	- NOTE: as arrays are internally stored in global scope they will not be cleared after each message
 - loadLastArrayElementToCustomVar
 	- RET: <0>
 	- ATR: <STRING> <STRING>
 	- load last element of global array (name in first argument) with given name to custom variable
 	- element is removed from array
 	- NOTE: as arrays are internally stored in global scope they will not be cleared after each message
-	- NOTE: as of 13.6 2024 only variables with names `custom1`, `custom2`, `custom3` are supported
 - removeLastArrayElement
 	-	RET: <ANY>
 	- ATR: <STRING>
@@ -518,7 +538,6 @@
 	- element is removed from array
 	- NOTE: as arrays are internally stored in global scope they will not be cleared after each message
 	- if you are using arrays withing your parsing schema reset it right in the beginning as the array will not be cleared after each message
-	- NOTE: as of 13.6 2024 only variables with names `custom1`, `custom2`, `custom3` are supported
 - removeFirstArrayElement
 	-	RET: <ANY>
 	- ATR: <STRING>

@@ -233,6 +233,16 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10_000 * ((argumentArray[0] >> 16) & 0xF) + 100_000 * ((argumentArray[0] >> 20) & 0xF) + 1_000_000 * ((argumentArray[0] >> 24) & 0xF) + 10_000_000 * ((argumentArray[0] >> 28) & 0xF) + 100_000_000 * ((argumentArray[0] >> 32) & 0xF) + 1_000_000_000 * ((argumentArray[0] >> 36) & 0xF) + 10_000_000_000 * ((argumentArray[0] >> 40) & 0xF) + 100_000_000_000 * ((argumentArray[0] >> 44) & 0xF);
 		},
 	},
+	getLength: {
+		name: 'getLength',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.STRING, enums_1.ExeType.BIN],
+		retType: enums_1.ExeType.STRING,
+		fun(argumentArray, variableMap) {
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[2], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			global[argumentArray[1]] = struct.len;
+
+		},
+	},
 	toHex: {
 		name: 'toHex',
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
@@ -362,20 +372,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		fun(argumentArray) {
 			if (!global.arrays) global.arrays = {};
 			if (!global.arrays[argumentArray[0]]) global.arrays[argumentArray[0]] = [];
-			switch (argumentArray[1]) {
-				case 'custom1': {
-					global.custom1 =  global.arrays[argumentArray[0]].pop();
-					break;
-				}
-				case 'custom2': {
-					global.custom2 =  global.arrays[argumentArray[0]].pop();
-					break;
-				}
-				case 'custom3': {
-					global.custom3 =  global.arrays[argumentArray[0]].pop();
-					break;
-				}
-			}
+			global[argumentArray[1]] = global.arrays[argumentArray[0]].pop();
 			return 0;
 		},
 	},
@@ -396,20 +393,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		fun(argumentArray) {
 			if (!global.arrays) global.arrays = {};
 			if (!global.arrays[argumentArray[0]]) global.arrays[argumentArray[0]] = [];
-			switch (argumentArray[1]) {
-				case 'custom1': {
-					global.custom1 =  global.arrays[argumentArray[0]].shift();
-					break;
-				}
-				case 'custom2': {
-					global.custom2 =  global.arrays[argumentArray[0]].shift();
-					break;
-				}
-				case 'custom3': {
-					global.custom3 =  global.arrays[argumentArray[0]].shift();
-					break;
-				}
-			}
+			global[argumentArray[1]] = global.arrays[argumentArray[0]].shift();
 			return 0;
 		},
 	},
@@ -423,28 +407,30 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return  global.arrays[argumentArray[0]].shift();
 		}
 	},
+	clearCustomVar: {
+		name: 'clearCustomVar',
+		argsType: [enums_1.ExeType.STRING],
+		retType: enums_1.ExeType.ANY,
+		fun(argumentArray) {
+			delete global[argumentArray[0]];
+			return 0;
+		},
+	},
+	clearCustomVariables: {
+		name: 'clearCustomVariables',
+		argsType: [],
+		retType: enums_1.ExeType.ANY,
+		fun(argumentArray) {
+			global = {};
+			return 0;
+		},
+	},
 	setCustomVar: {
 		name: 'setCustomVar',
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.ANY], // NOTE: test if this doesn't mess up anything else oritignaly was ExeType.INT
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
-			switch (argumentArray[0]) {
-				case 'custom1': {
-					global.custom1 = argumentArray[1];
-					break;
-				}
-
-				case 'custom2': {
-					global.custom2 = argumentArray[1];
-					break;
-				}
-
-				case 'custom3': {
-					global.custom3 = argumentArray[1];
-					break;
-				}
-			}
-
+			global[argumentArray[0]] = argumentArray[1];
 			return argumentArray[1];
 		},
 	},
