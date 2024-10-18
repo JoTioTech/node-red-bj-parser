@@ -236,11 +236,11 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 	getLength: {
 		name: 'getLength',
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.STRING, enums_1.ExeType.BIN],
-		retType: enums_1.ExeType.STRING,
+		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
 			const struct = (0, bin_1.genMaskIterator)(argumentArray[2], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
 			global[argumentArray[1]] = struct.len;
-
+			return struct.len;
 		},
 	},
 	toHex: {
@@ -416,9 +416,9 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return 0;
 		},
 	},
-	clearCustomVariables: {
-		name: 'clearCustomVariables',
-		argsType: [],
+	clearCustomVars: {
+		name: 'clearCustomVars',
+		argsType: [enums_1.ExeType.ANY],
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
 			global = {};
@@ -491,5 +491,44 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return new Date(argumentArray[0]).toUTCString();
 		},
 	},
+	dumbMilesightModbusFormat : { // used to parse modbus value in UC300 LTE version, not usefull anywhere else
+		name: 'dumbMilesightModbusFormat',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.INT, enums_1.ExeType.INT, enums_1.ExeType.BIN],
+		retType: enums_1.ExeType.JSON,
+		fun(argumentArray, variableMap) {
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[3], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			const endIndex = struct.ranges[0].iter.start + struct.len;
+			const chunkSizeBin = struct.len/argumentArray[1];
+			const chunkSize = struct.len/argumentArray[1]/8;
+			let byte = 0;
+			const data = [];
+			for (let i = struct.ranges[0].iter.start; i < endIndex; i += chunkSizeBin) {
+				byte = 0;
+				for (let index = 0; index < chunkSizeBin; index++) {
+					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
+				}
+				// reverse byte order in each chunk, its size in bytes in in chunkSize
+				let number = 0;
+				for (let i = 0; i < chunkSize; i++) {
+					number = (number << 8) + (byte & 0xFF);
+					byte >>= 8;
+				}
+
+				if (argumentArray[2] === 1 && number >= 2 ** (8 * chunkSize - 1) )
+						number -= 2 ** (8 * chunkSize);
+				else if (argumentArray[2] === 0xFF){ // convert to float
+						const sign = number >>> 31 === 0 ? 1 : -1;
+						const e = (number >>> 23) & 0xFF;
+						const m = e === 0 ? (number & 0x7F_FF_FF) << 1 : (number & 0x7F_FF_FF) | 0x80_00_00;
+						number = sign * m * 2 ** (e - 150);
+
+				}
+				data.push(number);
+			}
+			if(data === undefined || data.length === 0)
+				return 0;
+			return data;
+		}
+	}
 });
 // # sourceMappingURL=exeFun.js.map

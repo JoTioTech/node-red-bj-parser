@@ -510,10 +510,11 @@ WARN use with caution and responsibly
 	- ATR: <STRING>
 	- clear custom variable with given name
 	- NOTE: as custom variables are internally stored in global scope they will not be cleared after each message
-- clearCustomVariables
+- clearCustomVars
 	- RET: <0>
-	- ATR: <0>
+	- ATR: <ANY>
 	- clear all custom variables
+	- due to how parser is written some function argument must be sent
 	- NOTE: as custom variables are internally stored in global scope they will not be cleared after each message
 - getLength
 	- RET: <INT>
