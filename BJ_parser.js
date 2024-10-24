@@ -20,13 +20,10 @@ module.exports = function (RED) {
 			const parser = new parserModule.default(schema, parserConfig);
 
 			message.payload = parser.runHexAndWrap(stringHex);
-			// if(message.payload.outJson.network == undefined){
-			// 	message.payload.outJson.network = {}
-			// 	message.payload.outJson.network.network_type = "";
-			// }
-			// if(message.payload.outJson.msg_type == undefined) message.payload.outJson.msg_type = "";
-			// if(message.payload.outJson.device_type == undefined) message.payload.outJson.device_type = "";
-			// if(message.payload.outJson.device_subtype == undefined) message.payload.outJson.device_subtype = "";
+
+			if(schema.clearGlobalVars == true){
+				global = {};
+			}
 
 			message.payload.schemaInfo = {
 				"name" : schema.name,

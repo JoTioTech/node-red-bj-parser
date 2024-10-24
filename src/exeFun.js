@@ -496,8 +496,12 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.INT, enums_1.ExeType.INT, enums_1.ExeType.BIN],
 		retType: enums_1.ExeType.JSON,
 		fun(argumentArray, variableMap) {
+			if(argumentArray[1] == undefined || argumentArray[1] == 0){
+				return [];
+			}
 			const struct = (0, bin_1.genMaskIterator)(argumentArray[3], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
 			const endIndex = struct.ranges[0].iter.start + struct.len;
+
 			const chunkSizeBin = struct.len/argumentArray[1];
 			const chunkSize = struct.len/argumentArray[1]/8;
 			let byte = 0;
@@ -521,12 +525,12 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 						const e = (number >>> 23) & 0xFF;
 						const m = e === 0 ? (number & 0x7F_FF_FF) << 1 : (number & 0x7F_FF_FF) | 0x80_00_00;
 						number = sign * m * 2 ** (e - 150);
-
 				}
 				data.push(number);
 			}
-			if(data === undefined || data.length === 0)
-				return 0;
+			if(data == undefined || data.length == 0)
+				return [];
+
 			return data;
 		}
 	}

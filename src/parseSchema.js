@@ -12,6 +12,7 @@ function parseRuleMap(root) {
 		name: root.name || "",
 		version: root.version || "",
 		schemaVersion: root.schemaVersion || "1.0",
+		clearGlobalVars: root.clearGlobalVars || true,
 		rule: {}
 	};
 	Object.keys(root.rule).forEach(rName => {
