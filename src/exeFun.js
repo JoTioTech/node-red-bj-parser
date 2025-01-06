@@ -258,7 +258,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
 				}
 
-				string_ += byte.toString(16);
+				string_ += byte.toString(16).padStart(2, '0');
 			}
 
 			return string_;
@@ -533,6 +533,27 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 
 			return data;
 		}
-	}
+	},
+	asciiToNumber: {
+		name: 'asciiToNumber',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN], // mask, bin
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray) {
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[3], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			const endIndex = struct.ranges[0].iter.start + struct.len;
+			let byte = 0;
+			let number = 0;
+			for (let i = struct.ranges[0].iter.start; i < endIndex; i += 8) {
+				byte = 0;
+				for (let index = 0; index < 8; index++) {
+					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
+				}
+				byte -=48;
+				number = (number * 10) + byte;
+			}
+			return number;
+		},
+	},
+
 });
 // # sourceMappingURL=exeFun.js.map
