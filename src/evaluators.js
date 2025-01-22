@@ -356,7 +356,7 @@ class ExpEvaluator {
 			// this.varList["custom3"].val = global.custom3;
 
 			// copy all global variables into the varList
-			for (const [key, value] of Object.entries(global)) {
+			for (const [key, value] of Object.entries(global.parserVariables)) {
 				if (typeof value === 'number') {
 					this.varList[key] = {
 						val: value,

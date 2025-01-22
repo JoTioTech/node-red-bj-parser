@@ -14,6 +14,8 @@ module.exports = function (RED) {
 		this.on('input', message => {
 			const stringHex = message.payload;
 
+			if (!global.parserArrays) global.parserArrays = {};
+			if (!global.parserVariables) global.parserVariables = {};
 
 			// DELETE: This is just for development, all schemas should be validated beforehand
 			const schema = parserSchemaModule.parseRuleMap(message.parsingSchema);
@@ -22,7 +24,8 @@ module.exports = function (RED) {
 			message.payload = parser.runHexAndWrap(stringHex);
 
 			if(schema.clearGlobalVars == true){
-				global = {};
+				global.parserVariables = {};
+				global.parserArrays = {};
 			}
 
 			message.payload.schemaInfo = {

@@ -239,7 +239,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
 			const struct = (0, bin_1.genMaskIterator)(argumentArray[2], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
-			global[argumentArray[1]] = struct.len;
+			global.parserVariables[argumentArray[1]] = struct.len;
 			return struct.len;
 		},
 	},
@@ -348,8 +348,8 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING],
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
-			if (!global.arrays) global.arrays = {};
-			global.arrays[argumentArray[0]] = [];
+			if (!global.parserArrays) global.parserArrays = {};
+			global.parserArrays[argumentArray[0]] = [];
 			return 0;
 		},
 	},
@@ -358,9 +358,8 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.ANY],
 		retType: enums_1.ExeType.ARRAY,
 		fun(argumentArray) {
-			if (!global.arrays) global.arrays = {};
-			if (!global.arrays[argumentArray[0]]) global.arrays[argumentArray[0]] = [];
-			global.arrays[argumentArray[0]].push(argumentArray[1]);
+			if (!global.parserArrays[argumentArray[0]]) global.parserArrays[argumentArray[0]] = [];
+			global.parserArrays[argumentArray[0]].push(argumentArray[1]);
 			return 0;
 
 		},
@@ -370,9 +369,8 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.STRING],
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
-			if (!global.arrays) global.arrays = {};
-			if (!global.arrays[argumentArray[0]]) global.arrays[argumentArray[0]] = [];
-			global[argumentArray[1]] = global.arrays[argumentArray[0]].pop();
+			if (!global.parserArrays[argumentArray[0]]) global.parserArrays[argumentArray[0]] = [];
+			global.parserVariables[argumentArray[1]] = global.parserArrays[argumentArray[0]].pop();
 			return 0;
 		},
 	},
@@ -381,9 +379,8 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING],
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
-			if (!global.arrays) global.arrays = {};
-			if (!global.arrays[argumentArray[0]]) global.arrays[argumentArray[0]] = [];
-					return  global.arrays[argumentArray[0]].pop();
+			if (!global.parserArrays[argumentArray[0]]) global.parserArrays[argumentArray[0]] = [];
+					return  global.parserArrays[argumentArray[0]].pop();
 		},
 	},
 	loadFirstArrayElementToCustomVar: {
@@ -391,9 +388,8 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.STRING],
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
-			if (!global.arrays) global.arrays = {};
-			if (!global.arrays[argumentArray[0]]) global.arrays[argumentArray[0]] = [];
-			global[argumentArray[1]] = global.arrays[argumentArray[0]].shift();
+			if (!global.parserArrays[argumentArray[0]]) global.parserArrays[argumentArray[0]] = [];
+			global.parserVariables[argumentArray[1]] = global.parserArrays[argumentArray[0]].shift();
 			return 0;
 		},
 	},
@@ -402,9 +398,8 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING],
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
-			if (!global.arrays) global.arrays = {};
-			if (!global.arrays[argumentArray[0]]) global.arrays[argumentArray[0]] = [];
-			return  global.arrays[argumentArray[0]].shift();
+			if (!global.parserArrays[argumentArray[0]]) global.parserArrays[argumentArray[0]] = [];
+			return  global.parserArrays[argumentArray[0]].shift();
 		}
 	},
 	clearCustomVar: {
@@ -412,7 +407,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING],
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
-			delete global[argumentArray[0]];
+			delete global.parserVariables[argumentArray[0]];
 			return 0;
 		},
 	},
@@ -430,7 +425,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.ANY], // NOTE: test if this doesn't mess up anything else oritignaly was ExeType.INT
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
-			global[argumentArray[0]] = argumentArray[1];
+			global.parserVariables[argumentArray[0]] = argumentArray[1];
 			return argumentArray[1];
 		},
 	},
