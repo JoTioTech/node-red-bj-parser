@@ -193,12 +193,28 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF);
 		},
 	},
+	toIntBCD3Digit: {
+		name: 'toIntBCD3Digit',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF);
+		},
+	},
 	toIntBCD4Digit: {
 		name: 'toIntBCD4Digit',
 		argsType: [enums_1.ExeType.INT],
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
 			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF);
+		},
+	},
+	toIntBCD5Digit: {
+		name: 'toIntBCD5Digit',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10_000 * ((argumentArray[0] >> 16) & 0xF);
 		},
 	},
 	toIntBCD6Digit: {
@@ -209,12 +225,28 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10_000 * ((argumentArray[0] >> 16) & 0xF) + 100_000 * ((argumentArray[0] >> 20) & 0xF);
 		},
 	},
+	toIntBCD7Digit: {
+		name: 'toIntBCD7Digit',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10_000 * ((argumentArray[0] >> 16) & 0xF) + 100_000 * ((argumentArray[0] >> 20) & 0xF) + 1_000_000 * ((argumentArray[0] >> 24) & 0xF);
+		},
+	},
 	toIntBCD8Digit: {
 		name: 'toIntBCD8Digit',
 		argsType: [enums_1.ExeType.INT],
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
 			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10_000 * ((argumentArray[0] >> 16) & 0xF) + 100_000 * ((argumentArray[0] >> 20) & 0xF) + 1_000_000 * ((argumentArray[0] >> 24) & 0xF) + 10_000_000 * ((argumentArray[0] >> 28) & 0xF);
+		},
+	},
+	toIntBCD9Digit: {
+		name: 'toIntBCD9Digit',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10_000 * ((argumentArray[0] >> 16) & 0xF) + 100_000 * ((argumentArray[0] >> 20) & 0xF) + 1_000_000 * ((argumentArray[0] >> 24) & 0xF) + 10_000_000 * ((argumentArray[0] >> 28) & 0xF) + 100_000_000 * ((argumentArray[0] >> 32) & 0xF);
 		},
 	},
 	toIntBCD10Digit: {
@@ -341,6 +373,14 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray) {
 			return argumentArray[0] < 0x80_00 ? argumentArray[0] : argumentArray[0] - 0x1_00_00;
+		},
+	},
+	twoComplement1Byte: {
+		name: 'twoComplement1Byte',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray) {
+			return argumentArray[0] < 0x80 ? argumentArray[0] : argumentArray[0] - 0x1_00;
 		},
 	},
 	clearArray: {

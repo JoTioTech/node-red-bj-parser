@@ -410,18 +410,34 @@
 	- RET: <NUM>
 	- ATR: <NUM>
 	- convert to integer from 2 digit BCD (8bit number)
+- toIntBCD3Digit
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to integer from 3 digit BCD (8bit number)
 - toIntBCD4Digit
 	- RET: <NUM>
 	- ATR: <NUM>
 	- convert to integer from 4 digit BCD (16bit number)
+- toIntBCD5Digit
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to integer from 5 digit BCD (8bit number)
 - toIntBCD6Digit
 	- RET: <NUM>
 	- ATR: <NUM>
 	- convert to integer from 6 digit BCD (24bit number)
+- toIntBCD7Digit
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to integer from 7 digit BCD (8bit number)
 - toIntBCD8Digit
 	- RET: <NUM>
 	- ATR: <NUM>
 	- convert to integer from 8 digit BCD (32bit number)
+- toIntBCD9Digit
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to integer from 9 digit BCD (8bit number)
 - toIntBCD10Digit
 	- RET: <NUM>
 	- ATR: <NUM>
@@ -447,6 +463,10 @@
 	- ATR: <JSON_PATH>
 	- **not implemented**
 	- get atribute from *out_json*
+- twoComplement1Byte
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to two complement 1 byte number
 - twoComplement2Byte
 	- RET: <NUM>
 	- ATR: <NUM>
