@@ -9,8 +9,7 @@ var ExeType;
     ExeType[ExeType["BOOL"] = 3] = "BOOL";
     ExeType[ExeType["STRING"] = 4] = "STRING";
     ExeType[ExeType["PATH"] = 5] = "PATH";
-    ExeType[ExeType["FLOAT"] = 6] = "FLOAT";
-		ExeType[ExeType["JSON"] = 7] = "JSON";
+		ExeType[ExeType["JSON"] = 6] = "JSON";
 })(ExeType = exports.ExeType || (exports.ExeType = {}));
 exports.ExeTypeReverse = [
     "ANY",
@@ -19,7 +18,6 @@ exports.ExeTypeReverse = [
     "BOOL",
     "STRING",
     "PATH",
-		"FLOAT",
 		"JSON",
 ];
 var SET_ACTION_ENUM;

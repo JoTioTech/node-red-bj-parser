@@ -101,7 +101,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 	toFloat16: {
 		name: 'toFloat16',
 		argsType: [enums_1.ExeType.INT],
-		retType: enums_1.ExeType.FLOAT,
+		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
 		 const bits = argumentArray[0];
 			const sign = bits >>> 15 === 0 ? 1 : -1;
@@ -114,7 +114,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 	toFloat16LE: {
 		name: 'toFloat16LE',
 		argsType: [enums_1.ExeType.INT],
-		retType: enums_1.ExeType.FLOAT,
+		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
 		 const bits = ((argumentArray[0] & 0xFF) << 8) | (argumentArray[0] >> 8);
 			const sign = bits >>> 15 === 0 ? 1 : -1;
@@ -127,11 +127,24 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 	toFloat: {
 		name: 'toFloat',
 		argsType: [enums_1.ExeType.INT],
-		retType: enums_1.ExeType.FLOAT,
+		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
 			const sign = argumentArray[0] >>> 31 === 0 ? 1 : -1;
 			const e = (argumentArray[0] >>> 23) & 0xFF;
 			const m = e === 0 ? (argumentArray[0] & 0x7F_FF_FF) << 1 : (argumentArray[0] & 0x7F_FF_FF) | 0x80_00_00;
+			const f = sign * m * 2 ** (e - 150);
+			return f;
+		},
+	},
+	toFloatLE: {
+		name: 'toFloatLE',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			const bits = ((argumentArray[0] & 0xFF) << 24) | ((argumentArray[0] & 0xFF_00) << 8) | ((argumentArray[0] & 0xFF_00_00) >> 8) | ((argumentArray[0] >> 24) & 0xFF);
+			const sign = bits >>> 31 === 0 ? 1 : -1;
+			const e = (bits >>> 23) & 0xFF;
+			const m = e === 0 ? (bits & 0x7F_FF_FF) << 1 : (bits & 0x7F_FF_FF) | 0x80_00_00;
 			const f = sign * m * 2 ** (e - 150);
 			return f;
 		},
@@ -163,7 +176,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 	toFloat: {
 		name: 'toFloat',
 		argsType: [enums_1.ExeType.INT],
-		retType: enums_1.ExeType.FLOAT,
+		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
 			const sign = argumentArray[0] >>> 31 === 0 ? 1 : -1;
 			const e = (argumentArray[0] >>> 23) & 0xFF;
@@ -175,7 +188,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 	toFloatLE: {
 		name: 'toFloatLE',
 		argsType: [enums_1.ExeType.INT],
-		retType: enums_1.ExeType.FLOAT,
+		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
 			const bigEndian = ((argumentArray[0] & 0xFF) << 24) | ((argumentArray[0] & 0xFF_00) << 8) | ((argumentArray[0] & 0xFF_00_00) >> 8) | ((argumentArray[0] >> 24) & 0xFF);
 			const sign = bigEndian >>> 31 === 0 ? 1 : -1;

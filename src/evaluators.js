@@ -266,6 +266,7 @@ class ExpEvaluator {
 									if (node.value === '+')
 										return [enums_1.ExeType.STRING, lRes[1].toString() + rRes[1].toString()];
 								}
+
                 if (!(lRes[0] === enums_1.ExeType.INT && rRes[0] === enums_1.ExeType.INT))
                     throw new Error(`Not a valid data type for ${node.value} (must be INT is ${enums_1.ExeTypeReverse[lRes[0]]} and ${enums_1.ExeTypeReverse[rRes[0]]})`);
                 if (node.value === '+')
