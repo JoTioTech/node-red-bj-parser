@@ -461,6 +461,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
 			delete global.parserVariables[argumentArray[0]];
+			if (!global.parserVariables) global.parserVariables = {};
 			return 0;
 		},
 	},
@@ -469,7 +470,8 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.ANY],
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
-			global = {};
+			global.parserVariables = {};
+			global.parserArrays = {};
 			return 0;
 		},
 	},
@@ -478,6 +480,8 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.ANY], // NOTE: test if this doesn't mess up anything else oritignaly was ExeType.INT
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
+			console.log(global.parserVariables);
+			console.log(argumentArray[0]);
 			global.parserVariables[argumentArray[0]] = argumentArray[1];
 			return argumentArray[1];
 		},
