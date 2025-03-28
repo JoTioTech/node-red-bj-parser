@@ -492,6 +492,11 @@
 	- RET: <STRING>
 	- ATR: <MASK_EXP> <BIN>
 	- parse given part of message as MBUS message, only long frame is supported and header must be included
+- parseMBUSMockHeader
+	- RET: <STRING>
+	- ATR: <MASK_EXP> <BIN> <STRING>
+	- mocks MBUS message header so that the payload will pass trough the parser without problems
+	- last argument can either be simple (then only only 4 start bytes + CI fields are present) or full where whole MBUS header is created
 - toIMEI
   - RET: <STRING>
 	- ATR: <MASK_EXP> <BIN>

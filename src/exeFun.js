@@ -331,6 +331,84 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return data;
 		},
 	},
+	parseMBUSMockHeader: {
+		name: 'parseMBUSMockHeader',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN, enums_1.ExeType.STRING],
+		retType: enums_1.ExeType.JSON,
+		fun(argumentArray, variableMap) {
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			const endIndex = struct.ranges[0].iter.start + struct.len;
+			let byte = 0;
+
+			const array = [];
+
+			for (let i = struct.ranges[0].iter.start; i < endIndex; i += 8) {
+				byte = 0;
+				for (let index = 0; index < 8; index++) {
+					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
+				}
+
+				array.push(byte);
+			}
+
+			const start = 0x68;
+			const cField = 0x08; // Control field: RSP_UD (slave response)
+			const address = 0xFD; // Primary address (from manual)
+			const ciField = 0x72; // CI field: Variable Data Response
+
+			const identificationNumber = new Uint8Array([0x00, 0x00, 0x00, 0x00]); // 4 bytes (e.g., device ID)
+			const manufacturerId = new Uint8Array([0x2F, 0x00]); // 2 bytes
+			const version = new Uint8Array([0x07]); // 1 byte (FW 2.0.0)
+			const deviceType = new Uint8Array([0xFF]); // 1 byte (unknown)
+			const accessNumber = new Uint8Array([0x00]); // 1 byte
+			const status = new Uint8Array([0x02]); // 1 byte (no error)
+			const configWord = new Uint8Array([0x00, 0x00]); // 2 bytes
+			const signature = new Uint8Array([0x2F, 0x2F]); // 2 bytes (AES placeholder)
+
+			let dataBytes = new Uint8Array([]);
+
+			if (argumentArray[2] === 'simple') {
+				dataBytes = new Uint8Array(array);
+			} else if (argumentArray[2] === 'full') {
+				dataBytes = new Uint8Array([
+					...identificationNumber,
+					...manufacturerId,
+					...version,
+					...deviceType,
+					...accessNumber,
+					...status,
+					...configWord,
+					...signature,
+					...array,
+				]);
+			}
+
+			const dataLength = 3 + dataBytes.length;
+			const lValue = dataLength & 0xFF;
+
+			const checksumBytes = new Uint8Array([cField, address, ciField, ...dataBytes]);
+			const checksum = checksumBytes.reduce((sum, byte) => sum + byte, 0) % 256;
+
+			const frame = new Uint8Array([
+				start,
+				lValue,
+				lValue,
+				start, // Header: 68 L L 68
+				cField,
+				address,
+				ciField, // C/A/CI fields
+				...dataBytes, // Data (mandatory fields + records)
+				checksum, // Checksum
+				0x16, // Stop byte
+			]);
+
+			// const hexFrame = [...frame].map(byte => byte.toString(16).padStart(2, '0')).join('');
+			// console.log(hexFrame);
+
+			const data = (0, mbus_1.mbusDecoder)(frame);
+			return data;
+		},
+	},
 	toIMEI: {
 		name: 'toIMEI',
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
@@ -345,12 +423,16 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 				for (let index = 0; index < 8; index++) {
 					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
 				}
+
 				array.push(byte);
 			}
-			// convert byte array to IMEI String
+
+			// Convert byte array to IMEI String
 			let toReturn = '';
-			for(var i =0; i < array.length; i++)
-				toReturn = toReturn + array[i].toString().padStart(i==array.length-1 ? 1 : 2, '0');
+			for (let i = 0; i < array.length; i++) {
+				toReturn += array[i].toString().padStart(i == array.length - 1 ? 1 : 2, '0');
+			}
+
 			return toReturn;
 		},
 	},
@@ -401,7 +483,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING],
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
-			if (!global.parserArrays) global.parserArrays = {};
+			global.parserArrays ||= {};
 			global.parserArrays[argumentArray[0]] = [];
 			return 0;
 		},
@@ -411,10 +493,12 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.ANY],
 		retType: enums_1.ExeType.ARRAY,
 		fun(argumentArray) {
-			if (!global.parserArrays[argumentArray[0]]) global.parserArrays[argumentArray[0]] = [];
+			if (!global.parserArrays[argumentArray[0]]) {
+				global.parserArrays[argumentArray[0]] = [];
+			}
+
 			global.parserArrays[argumentArray[0]].push(argumentArray[1]);
 			return 0;
-
 		},
 	},
 	loadLastArrayElementToCustomVar: {
@@ -422,18 +506,24 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.STRING],
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
-			if (!global.parserArrays[argumentArray[0]]) global.parserArrays[argumentArray[0]] = [];
+			if (!global.parserArrays[argumentArray[0]]) {
+				global.parserArrays[argumentArray[0]] = [];
+			}
+
 			global.parserVariables[argumentArray[1]] = global.parserArrays[argumentArray[0]].pop();
 			return 0;
 		},
 	},
-	removeLastArrayElement : {
+	removeLastArrayElement: {
 		name: 'removeLastArrayElement',
 		argsType: [enums_1.ExeType.STRING],
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
-			if (!global.parserArrays[argumentArray[0]]) global.parserArrays[argumentArray[0]] = [];
-					return  global.parserArrays[argumentArray[0]].pop();
+			if (!global.parserArrays[argumentArray[0]]) {
+				global.parserArrays[argumentArray[0]] = [];
+			}
+
+			return global.parserArrays[argumentArray[0]].pop();
 		},
 	},
 	loadFirstArrayElementToCustomVar: {
@@ -441,19 +531,25 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.STRING],
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
-			if (!global.parserArrays[argumentArray[0]]) global.parserArrays[argumentArray[0]] = [];
+			if (!global.parserArrays[argumentArray[0]]) {
+				global.parserArrays[argumentArray[0]] = [];
+			}
+
 			global.parserVariables[argumentArray[1]] = global.parserArrays[argumentArray[0]].shift();
 			return 0;
 		},
 	},
-	removeFirstArrayElement : {
+	removeFirstArrayElement: {
 		name: 'removeFirstArrayElement',
 		argsType: [enums_1.ExeType.STRING],
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
-			if (!global.parserArrays[argumentArray[0]]) global.parserArrays[argumentArray[0]] = [];
-			return  global.parserArrays[argumentArray[0]].shift();
-		}
+			if (!global.parserArrays[argumentArray[0]]) {
+				global.parserArrays[argumentArray[0]] = [];
+			}
+
+			return global.parserArrays[argumentArray[0]].shift();
+		},
 	},
 	clearCustomVar: {
 		name: 'clearCustomVar',
@@ -461,7 +557,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
 			delete global.parserVariables[argumentArray[0]];
-			if (!global.parserVariables) global.parserVariables = {};
+			global.parserVariables ||= {};
 			return 0;
 		},
 	},
@@ -480,8 +576,8 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.ANY], // NOTE: test if this doesn't mess up anything else oritignaly was ExeType.INT
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
-			console.log(global.parserVariables);
-			console.log(argumentArray[0]);
+			// console.log(global.parserVariables);
+			// console.log(argumentArray[0]);
 			global.parserVariables[argumentArray[0]] = argumentArray[1];
 			return argumentArray[1];
 		},
@@ -543,52 +639,57 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return new Date(argumentArray[0]).toUTCString();
 		},
 	},
-	dumbMilesightModbusFormat : { // used to parse modbus value in UC300 LTE version, not usefull anywhere else
+	dumbMilesightModbusFormat: { // Used to parse modbus value in UC300 LTE version, not usefull anywhere else
 		name: 'dumbMilesightModbusFormat',
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.INT, enums_1.ExeType.INT, enums_1.ExeType.BIN],
 		retType: enums_1.ExeType.JSON,
 		fun(argumentArray, variableMap) {
-			if(argumentArray[1] == undefined || argumentArray[1] == 0){
+			if (argumentArray[1] == undefined || argumentArray[1] == 0) {
 				return [];
 			}
+
 			const struct = (0, bin_1.genMaskIterator)(argumentArray[3], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
 			const endIndex = struct.ranges[0].iter.start + struct.len;
 
-			const chunkSizeBin = struct.len/argumentArray[1];
-			const chunkSize = struct.len/argumentArray[1]/8;
+			const chunkSizeBinary = struct.len / argumentArray[1];
+			const chunkSize = struct.len / argumentArray[1] / 8;
 			let byte = 0;
 			const data = [];
-			for (let i = struct.ranges[0].iter.start; i < endIndex; i += chunkSizeBin) {
+			for (let i = struct.ranges[0].iter.start; i < endIndex; i += chunkSizeBinary) {
 				byte = 0;
-				for (let index = 0; index < chunkSizeBin; index++) {
+				for (let index = 0; index < chunkSizeBinary; index++) {
 					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
 				}
-				// reverse byte order in each chunk, its size in bytes in in chunkSize
+
+				// Reverse byte order in each chunk, its size in bytes in in chunkSize
 				let number = 0;
 				for (let i = 0; i < chunkSize; i++) {
 					number = (number << 8) + (byte & 0xFF);
 					byte >>= 8;
 				}
 
-				if (argumentArray[2] === 1 && number >= 2 ** (8 * chunkSize - 1) )
-						number -= 2 ** (8 * chunkSize);
-				else if (argumentArray[2] === 0xFF){ // convert to float
-						const sign = number >>> 31 === 0 ? 1 : -1;
-						const e = (number >>> 23) & 0xFF;
-						const m = e === 0 ? (number & 0x7F_FF_FF) << 1 : (number & 0x7F_FF_FF) | 0x80_00_00;
-						number = sign * m * 2 ** (e - 150);
+				if (argumentArray[2] === 1 && number >= 2 ** (8 * chunkSize - 1)) {
+					number -= 2 ** (8 * chunkSize);
+				} else if (argumentArray[2] === 0xFF) { // Convert to float
+					const sign = number >>> 31 === 0 ? 1 : -1;
+					const e = (number >>> 23) & 0xFF;
+					const m = e === 0 ? (number & 0x7F_FF_FF) << 1 : (number & 0x7F_FF_FF) | 0x80_00_00;
+					number = sign * m * 2 ** (e - 150);
 				}
+
 				data.push(number);
 			}
-			if(data == undefined || data.length == 0)
+
+			if (data == undefined || data.length === 0) {
 				return [];
+			}
 
 			return data;
-		}
+		},
 	},
 	asciiToNumber: {
 		name: 'asciiToNumber',
-		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN], // mask, bin
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN], // Mask, bin
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray) {
 			const struct = (0, bin_1.genMaskIterator)(argumentArray[3], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
@@ -600,9 +701,11 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 				for (let index = 0; index < 8; index++) {
 					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
 				}
-				byte -=48;
+
+				byte -= 48;
 				number = (number * 10) + byte;
 			}
+
 			return number;
 		},
 	},

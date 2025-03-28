@@ -176,7 +176,7 @@ function ba2bcd(a, x) {
 			s += c;
 		} else {
 			e = 1, s += 'A-C EF'.charAt(c - 10);
-			console.log("got here2");
+			// console.log("got here2");
 		}
 	}
 
@@ -946,7 +946,7 @@ function mbusDecoder(a) {
 
 			if (s) {
 				t = m ? (t.charAt(0) == '-' ? t.slice(1) : ('-' + t)) : -t;
-			console.log("got here3");
+			// console.log("got here3");
 			}
 
 			if (v.e) {
