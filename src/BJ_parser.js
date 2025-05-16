@@ -301,7 +301,7 @@ class Parser {
 					} else
 						path = path.concat(text[i]);
 				}
-				console.log('PATH:', path);
+				// console.log('PATH:', path);
 
 				fullPath.push({
 					name: path,
