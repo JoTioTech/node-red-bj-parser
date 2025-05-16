@@ -576,9 +576,10 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.ANY], // NOTE: test if this doesn't mess up anything else oritignaly was ExeType.INT
 		retType: enums_1.ExeType.ANY,
 		fun(argumentArray) {
-			// console.log(global.parserVariables);
-			// console.log(argumentArray[0]);
+
+			// console.log("Setting " + argumentArray[0] + " to " + argumentArray[1]);
 			global.parserVariables[argumentArray[0]] = argumentArray[1];
+			// console.log(global.parserVariables);
 			return argumentArray[1];
 		},
 	},

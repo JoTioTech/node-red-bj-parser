@@ -91,11 +91,12 @@
 
 #### Attributes (in array element)
 - valMask
-	- WARN: Does not work, sometimes error of val not existing is thrown
 	- VAR: $in, $len
 	- mask for $val variable
 - target
 	- path in *out_json*, where value will be written
+	- using [$val] will create array - e.g.  mduList[$custom1]/mduTypeDesc
+	- using {$val} will input value as string to that point - e.g. deviceInfo/manSpecific/alarm/{$pmNameStr}
 - type
 	- OPTIONAL; default: use values from *action*, *val*
 	- list of available valu (multiple elements can be executed)
@@ -125,17 +126,18 @@
 
 #### Structure
 
-```
+```json
 {
 		valMask: <MASK_EXP>,
 		target: <JSON_PATH>,
 		single: <BOOL>,
-		type:
-		{
-				selector: <BOOL_EXP>,
-				action: <SET_ACTION_ENUM>,
-				val: <ANY_EXP>
-		}[],
+		type: [
+			{
+					selector: <BOOL_EXP>,
+					action: <SET_ACTION_ENUM>,
+					val: <ANY_EXP>
+			}
+		],
 		action: <SET_ACTION_ENUM>,
 		val: <ANY_EXP>
 }[]
@@ -166,7 +168,7 @@
 ```
 
 
-## RULE.SUBPARSING
+## RULE SUBPARSING
 
 - parse next part of *in_bin*
 

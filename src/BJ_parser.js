@@ -65,7 +65,10 @@ class Parser {
 		rSchema.set.forEach((set, setId) => {
 			executor
 				.setVar('outJson', fullOutputJson, enums_1.ExeType.ANY);
+			// Console.log("----------------------------");
+			// console.log(set.target);
 			const targetPath = this.concatPath(pathModifier, set.target, executor);
+			// Console.log(targetPath);
 			if (set.valMask) {
 				const valueInt = (0, bin_1.consumeIterToInt)((0, bin_1.genMaskIterator)(rootPld, set.valMask, executor));
 				executor.setVar('val', valueInt, enums_1.ExeType.INT);
@@ -235,7 +238,7 @@ class Parser {
 	}
 
 	concatPath(oldError, newPath = '', executor) {
-		const fullPath = oldError.slice();
+		const fullPath = [...oldError];
 		const splitPath = newPath.split('/').filter(Boolean);
 		for (const value of splitPath) {
 			if (value === '..') {
@@ -275,6 +278,35 @@ class Parser {
 						type: enums_1.JSON_PATH_TYPE.ARR,
 					});
 				}
+			} else if (value.includes('{')) {
+				// Lets say value here is "banana{$val1}ananas{$val2}"
+				// we want to extract the values of $val1 and $val2 resolve, then merge path together again
+				// as of now only global variables are supported, no reason to include parsers own variables
+				let path = "";
+				const text = value.split('{');
+				// console.log(text)
+
+				for (let i = 0; i < text.length; i++) {
+					// console.log('TEXT:', text[i]);
+					if (text[i].includes('}') && text[i][0] === '$') {
+						let section = text[i].split('}');
+						const key = section[0].substring(1);
+						if (global.parserVariables[key] === undefined)
+							throw new errors_1.InputFormatError('Invalid path concat', {currentPath: oldError, newPath: splitPath});
+						else
+							path = path.concat(global.parserVariables[key]);
+
+						if(section[1].length > 0)
+							path = path.concat(section[1]);
+					} else
+						path = path.concat(text[i]);
+				}
+				console.log('PATH:', path);
+
+				fullPath.push({
+					name: path,
+					type: enums_1.JSON_PATH_TYPE.OBJECT,
+				});
 			} else if (value !== '.') {
 				fullPath.push({
 					name: value,

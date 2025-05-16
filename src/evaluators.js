@@ -352,18 +352,15 @@ class ExpEvaluator {
         }
 
 			// XXX - load only selected global variables, uncomment if loading all global variables will become too slow
-			// this.varList["custom1"].val = global.custom1;
-			// this.varList["custom2"].val = global.custom2;
-			// this.varList["custom3"].val = global.custom3;
 
 			// copy all global variables into the varList
 			for (const [key, value] of Object.entries(global.parserVariables)) {
-				if (typeof value === 'number') {
-					this.varList[key] = {
-						val: value,
-						type: enums_1.ExeType.INT
-					};
-				}
+				// if (typeof value === 'number') {
+				this.varList[key] = {
+					val: value,
+					type: enums_1.ExeType.INT
+				};
+				// }
 			}
 
         const varMeta = this.varList[fullName];
