@@ -325,7 +325,7 @@
 
 ## Operators
 
-- \+, \-, \*, \\
+- \+, \-, \*, \\, \%
 	- std. math operators (not for string)
 - (...)
 	- std. bracket
@@ -344,6 +344,10 @@
 	- RET: <BOOL>
 	- ATR: <ANY>, <ANY>
 	- js: ===
+- neql
+	- RET: <BOOL>
+	- ATR: <ANY>, <ANY>
+	- js: !==
 - more
 	- RET: <BOOL>
 	- ATR: <ANY>, <ANY>

@@ -123,7 +123,7 @@ class ExpEvaluator {
                     value: char
                 });
             }
-            else if (char === '*' || char === '/' || char === ':') {
+            else if (char === '*' || char === '/' || char === '%' || char === ':') {
                 root = this.insertIntoTree(root, {
                     priority: 1,
                     type: null,
@@ -261,7 +261,7 @@ class ExpEvaluator {
             if (!node.subL)
                 throw new Error("Not a valid operation tree");
             const lRes = this.evalTree(node.subL);
-            if (node.value === '+' || node.value === '-' || node.value === '*' || node.value === '/') {
+            if (node.value === '+' || node.value === '-' || node.value === '*' || node.value === '/' || node.value === '%') {
 								if(lRes[0] === enums_1.ExeType.STRING || rRes[0] === enums_1.ExeType.STRING){
 									if (node.value === '+')
 										return [enums_1.ExeType.STRING, lRes[1].toString() + rRes[1].toString()];
@@ -277,6 +277,8 @@ class ExpEvaluator {
                     return [enums_1.ExeType.INT, lRes[1] * rRes[1]];
                 if (node.value === '/')
                     return [enums_1.ExeType.INT, lRes[1] / rRes[1]];
+                if (node.value === '%')
+                    return [enums_1.ExeType.INT, lRes[1] % Math.floor(rRes[1])];
             }
             else if (node.value === ':') {
                 if (!(lRes[0] === enums_1.ExeType.BIN && rRes[0] === enums_1.ExeType.BIN))
