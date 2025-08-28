@@ -104,11 +104,6 @@ class ExpEvaluator {
                 });
             }
             else if (char === '$') {
-							// -- load in global variables here
-								// setVar("custom1", global.custom1, enums_1.ExeType.INT);
-								// setVar("custom2", global.custom2, enums_1.ExeType.INT);
-								// setVar("custom3", global.custom3, enums_1.ExeType.INT);
-
                 const resVal = this.evalVar(str);
                 root = this.insertIntoTree(root, {
                     priority: 0,
@@ -352,8 +347,6 @@ class ExpEvaluator {
             else
                 break;
         }
-
-			// XXX - load only selected global variables, uncomment if loading all global variables will become too slow
 
 			// copy all global variables into the varList
 			for (const [key, value] of Object.entries(global.parserVariables)) {

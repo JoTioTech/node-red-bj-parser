@@ -4,6 +4,7 @@
 ## FIXES
 - $val variable does not always work in set action, behavior is not consistent
 - improper handling of repeat will lead to infinite loop and crash of whole Node-RED
+- parser can sometimes start processing data after payload has already ended
 
 ## ROOT
 - list all all rules
@@ -362,7 +363,7 @@
 	- if empty or 0 => false, else true
 - toInt16
 	- RET: <NUM>
-	- ATR: <NUM>
+	- ATR: <NU>
 	- convert to signed 16bit integer
 - toUInt16LE
 	- RET: <NUM>

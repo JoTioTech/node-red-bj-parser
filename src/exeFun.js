@@ -36,6 +36,8 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.ANY, enums_1.ExeType.ANY],
 		retType: enums_1.ExeType.BOOL,
 		fun(argumentArray, variableMap) {
+			// console.log(argumentArray);
+			// console.log(argumentArray[0] < argumentArray[1]);
 			return argumentArray[0] < argumentArray[1];
 		},
 	},
@@ -45,6 +47,14 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		retType: enums_1.ExeType.BOOL,
 		fun(argumentArray, variableMap) {
 			return Boolean(argumentArray[0]);
+		},
+	},
+	toInt8 : {
+		name: 'toInt8',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			return argumentArray[0] < 0x80 ? argumentArray[0] : argumentArray[0] - 0x1_00;
 		},
 	},
 	toInt32: {
@@ -285,6 +295,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		fun(argumentArray, variableMap) {
 			const struct = (0, bin_1.genMaskIterator)(argumentArray[2], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
 			global.parserVariables[argumentArray[1]] = struct.len;
+			// console.log('Set parser variable', argumentArray[1], 'to', struct.len);
 			return struct.len;
 		},
 	},
