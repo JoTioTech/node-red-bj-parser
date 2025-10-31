@@ -54,7 +54,6 @@ class Parser {
 		return fullOutputJson;
 	}
 
-	// TODO: there should be built in recursion protection
 	executeRule(fullOutputJson, ruleName, rootPld, pathModifier) {
 		const ruleIterCount = (this.ExecutedRuleCount).toString().padStart(2, '0');
 		const rSchema = this.Schema.rule[ruleName];
@@ -105,10 +104,15 @@ class Parser {
 			const sub = rSchema.subParsing[subStruckI];
 			this.Logger.logAs(logger_1.DEBUG_TYPE.SUB_REPETITION, subStruckI, `${subGlobRepetitionCount},${repeatRuleMask[subStruckI]}`, `(${sub.repeatMaxGlob},${sub.repeatMax})`);
 			if (sub.repeatMaxGlob >= 0 && sub.repeatMaxGlob <= subGlobRepetitionCount) {
+				this.Logger.logAs(logger_1.DEBUG_TYPE.ERR, 'Cropping sub-parsing due to reaching global max repetitions');
 				continue;
 			}
 
 			if (sub.repeatMax >= 0 && sub.repeatMax <= repeatRuleMask[subStruckI]) {
+				if(repeatRuleMask[subStruckI] == 128){
+					this.Logger.logAs(logger_1.DEBUG_TYPE.ERR, 'Possible infinite loop detected, breaking execution');
+
+				}
 				continue;
 			}
 

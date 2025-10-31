@@ -91,6 +91,14 @@ function parseRule(rule, ruleMap) {
 			if (typeof sub.subMask !== "string")
 				throw new Error(`no subMask atribute in subParsing array with index ${subId}`);
 			const breakVal = sub.break !== undefined ? sub.break : sub.repeat !== undefined ? !sub.repeat : (sub.repeatMax === undefined && sub.repeatMaxGlob === undefined);
+			let repeatMax = -1;
+			if (sub.repeat !== undefined && sub.repeat) // NOTE: this is a rather ugly way to prevent errors that crash the program, this is also
+				repeatMax = (sub.repeatMax !== undefined && sub.repeatMax <= 128) ? sub.repeatMax : 128;
+
+			// if (repeatMax === 128){
+			// 	console.warn(`Warning: In subParsing array with index ${subId}, 'repeat' is set to true but 'repeatMax' is not defined or exceeds 128. Defaulting 'repeatMax' to 128 to prevent potential infinite loops.`);
+			// }
+
 			const ret = {
 				valMask: (lastMask === sub.valMask) ? true : (sub.valMask || null),
 				selector: sub.selector || true,
@@ -98,7 +106,7 @@ function parseRule(rule, ruleMap) {
 				chroot: sub.chroot || "",
 				subMask: sub.subMask,
 				newIn: sub.newVal || null,
-				repeatMax: sub.repeatMax || -1,
+				repeatMax: repeatMax,
 				repeatMaxGlob: sub.repeatMaxGlob || -1,
 				break: breakVal
 			};

@@ -199,6 +199,7 @@
 - repeatMax
 	- OPTIONAL; default: InF
 	- skip this subrule, if number of times **this subrule** was already called is greater or equal of this value (in this subparsing, in this call)
+  - maximal number of repetitions is limited to 128 to avoid infinite loops - this limits is automatically applied even if repeatMax is set to higher value or not set at all
 - repeatMaxGlob
 	- OPTIONAL; default: InF
 	- skip this subrule, if number of times **any subrule** was already called is greater or equal of this value (in this subparsing, in this call)
