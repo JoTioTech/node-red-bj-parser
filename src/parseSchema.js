@@ -62,10 +62,14 @@ function parseRule(rule, ruleMap) {
 				if (isActionNotNoAction(set.action) && typeof set.target !== "string")
 						throw new Error(`no target atribute in set array with index ${setId}`);
 				const typeList = (Array.isArray(set.type)) ? set.type.map((type, typeId) => {
-				if (!type.val)
+				if (!type.val){
+					console.error(set);
 					throw new Error(`no val atribute in set array with index ${setId} in type array with index ${typeId}`);
-				if (isInvalidSetAction(type.action))
+				}
+				if (isInvalidSetAction(type.action)){
+					console.error(set);
 					throw new Error(`not valid action atribute in set array with index ${setId} in type array with index ${typeId}`);
+				}
 				return {
 					selector: type.selector || true,
 					action: type.action ? SetActionMap[type.action] : enums_1.SET_ACTION_ENUM.SET_UPDATE,

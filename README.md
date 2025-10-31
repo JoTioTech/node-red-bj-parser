@@ -487,6 +487,10 @@
 	- RET: <NUM>
 	- ATR: <NUM>
 	- convert to two complement 4 byte number
+- getBit
+	- RET: <BOOL>
+	- ATR: <NUM>, <NUM>
+	- get bit at given position from given number
 - parseUTC_5b
 	- RET: <STRING>
 	- ATR: <STRING>
@@ -495,6 +499,11 @@
 	- RET: <STRING>
 	- ATR: <MASK_EXP> <BIN>
 	- convert binary in ranges specified by mask to hex string
+	- WARN: alway pick length in mask divisible by 8
+- toHexLE
+	- RET: <STRING>
+	- ATR: <MASK_EXP> <BIN>
+	- convert binary in ranges specified by mask to hex string, in reverse byte order
 	- WARN: alway pick length in mask divisible by 8
 - parseMBUS
 	- RET: <STRING>

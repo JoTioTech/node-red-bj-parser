@@ -299,6 +299,27 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return struct.len;
 		},
 	},
+	toHexLE: {
+		name: 'toHex',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
+		retType: enums_1.ExeType.STRING,
+		fun(argumentArray, variableMap) {
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			let string_ = '';
+			const endIndex = struct.ranges[0].iter.start + struct.len;
+			let byte = 0;
+			for (let i = struct.ranges[0].iter.start+endIndex-8; i >= 0; i -= 8) {
+				byte = 0;
+				for (let index = 0; index < 8; index++) {
+					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
+				}
+
+				string_ += byte.toString(16).padStart(2, '0');
+			}
+
+			return string_;
+		},
+	},
 	toHex: {
 		name: 'toHex',
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
@@ -487,6 +508,14 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray) {
 			return argumentArray[0] < 0x80 ? argumentArray[0] : argumentArray[0] - 0x1_00;
+		},
+	},
+	getBit: {
+		name: 'getBit',
+		argsType: [enums_1.ExeType.INT, enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray) {
+			return (argumentArray[0] >> argumentArray[1]) & 1;
 		},
 	},
 	clearArray: {
