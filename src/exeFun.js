@@ -300,7 +300,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		},
 	},
 	toHexLE: {
-		name: 'toHex',
+		name: 'toHexLE',
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
 		retType: enums_1.ExeType.STRING,
 		fun(argumentArray, variableMap) {
