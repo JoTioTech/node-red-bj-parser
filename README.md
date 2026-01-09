@@ -518,6 +518,10 @@
   - RET: <STRING>
 	- ATR: <MASK_EXP> <BIN>
 	- interprets given sector as IMEI number
+- toICCID
+  - RET: <STRING>
+	- ATR: <MASK_EXP> <BIN>
+	- interprets given sector as ICCID number
 - toMBUSManufacturerID
   - RET: <STRING>
 	- ATR: <NUM>
