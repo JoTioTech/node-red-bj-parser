@@ -362,10 +362,75 @@
 	- RET: <BOOL>
 	- ATR: <ANY>
 	- if empty or 0 => false, else true
+- toUtf8
+	- RET: <NUM>
+	- ATR: <ANY>
+	- convert bin to string (if binary do not have whole number of bits pass **end** with zeros)
+- mask
+	- RET: <NUM>
+	- ATR: <MASK_EXP>, <BIN>
+	- apply mask to binary and returns number
+- maskB
+	- RET: <BIN>
+	- ATR: <MASK_EXP>, <BIN>
+	- apply mask to binary and returns binary
+- getAtr
+	- RET: <ANY>
+	- ATR: <JSON_PATH>
+	- **not implemented**
+	- get atribute from *out_json*
+- getBit
+	- RET: <BOOL>
+	- ATR: <NUM>, <NUM>
+	- get bit at given position from given number
+
+### Number conversions
+
+#### Ints
 - toInt16
 	- RET: <NUM>
 	- ATR: <NU>
 	- convert to signed 16bit integer
+- toInt24
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to signed 24bit integer
+- toInt32
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to signed 32bit integer
+- toInt64
+	- RET: <MASK_EXP> <BIN>
+	- ATR: <STRING>
+	- as JavaScript works with 64 bit doubles and binary operations are done over 32 bit ints, I need to process the double as an byte array, in addition output cannot be a BigInt as BigInt aren't possible to serialize into JSON
+	- convert to signed 64bit integer, little endian
+- toUInt64
+	- RET: <MASK_EXP> <BIN>
+	- ATR: <STRING>
+	- as JavaScript works with 64 bit doubles and binary operations are done over 32 bit ints, I need to process the double as an byte array, in addition output cannot be a BigInt as BigInt aren't possible to serialize into JSON
+	- convert to unsigned 64bit integer, little endian
+- twoComplement1Byte
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to two complement 1 byte number
+	- NOTE: deprecated
+- twoComplement2Byte
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to two complement 2 byte number
+- twoComplement3Byte
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to two complement 3 byte number
+	- NOTE: deprecated
+- twoComplement4Byte
+	- RET: <NUM>
+	- ATR: <NUM>
+	- convert to two complement 4 byte number
+	- NOTE: deprecated
+
+
+#### Ints + Endianness
 - toUInt16LE
 	- RET: <NUM>
 	- ATR: <NUM>
@@ -374,10 +439,6 @@
 	- RET: <NUM>
 	- ATR: <NUM>
 	- convert to signed 16bit integer, little endian
-- toInt24
-	- RET: <NUM>
-	- ATR: <NUM>
-	- convert to signed 24bit integer
 - toUInt24LE
 	- RET: <NUM>
 	- ATR: <NUM>
@@ -386,10 +447,6 @@
 	- RET: <NUM>
 	- ATR: <NUM>
 	- convert to signed 24bit integer, little endian
-- toInt32
-	- RET: <NUM>
-	- ATR: <NUM>
-	- convert to signed 32bit integer
 - toUInt32LE
 	- RET: <NUM>
 	- ATR: <NUM>
@@ -398,6 +455,20 @@
 	- RET: <NUM>
 	- ATR: <NUM>
 	- convert to signed 32bit integer, little endian
+- toUIn642LE
+	- RET: <MASK_EXP> <BIN>
+	- ATR: <STRING>
+	- as JavaScript works with 64 bit doubles and binary operations are done over 32 bit ints, I need to process the double as an byte array, in addition output cannot be a BigInt as BigInt aren't possible to serialize into JSON
+	- convert to unsigned 64bit integer, little endian
+- toInt64LE
+	- RET: <MASK_EXP> <BIN>
+	- ATR: <STRING>
+	- as JavaScript works with 64 bit doubles and binary operations are done over 32 bit ints, I need to process the double as an byte array, in addition output cannot be a BigInt as BigInt aren't possible to serialize into JSON
+	- convert to signed 64bit integer, little endian
+
+
+
+#### Floats and Doubles
 - toFloat16
 	- RET: <NUM>
 	- ATR: <NUM>
@@ -414,6 +485,18 @@
 	- RET: <NUM>
 	- ATR: <NUM>
 	- convert to 32bit float, little endian order
+- toDouble
+	- RET: <MASK_EXP> <BIN>
+	- ATR: <NUM>
+	- as JavaScript works with 64 bit doubles and binary operations are done over 32 bit ints, I need to process the double as an byte array
+	- convert to 64bit float
+- toFloatLE
+	- RET: <MASK_EXP> <BIN>
+	- ATR: <NUM>
+	- as JavaScript works with 64 bit doubles and binary operations are done over 32 bit ints, I need to process the double as an byte array
+	- convert to 64bit float, little endian order
+
+#### BCD Conversions
 - toIntBCD2Digit
 	- RET: <NUM>
 	- ATR: <NUM>
@@ -442,55 +525,8 @@
 	- RET: <NUM>
 	- ATR: <NUM>
 	- convert to integer from 8 digit BCD (32bit number)
-- toIntBCD9Digit
-	- RET: <NUM>
-	- ATR: <NUM>
-	- convert to integer from 9 digit BCD (8bit number)
-- toIntBCD10Digit
-	- RET: <NUM>
-	- ATR: <NUM>
-	- convert to integer from 10 digit BCD (40bit number)
-- toIntBCD12Digit
-	- RET: <NUM>
-	- ATR: <NUM>
-	- convert to integer from 12 digit BCD (48bit number)
-- toUtf8
-	- RET: <NUM>
-	- ATR: <ANY>
-	- convert bin to string (if binary do not have whole number of bits pass **end** with zeros)
-- mask
-	- RET: <NUM>
-	- ATR: <MASK_EXP>, <BIN>
-	- apply mask to binary and returns number
-- maskB
-	- RET: <BIN>
-	- ATR: <MASK_EXP>, <BIN>
-	- apply mask to binary and returns binary
-- getAtr
-	- RET: <ANY>
-	- ATR: <JSON_PATH>
-	- **not implemented**
-	- get atribute from *out_json*
-- twoComplement1Byte
-	- RET: <NUM>
-	- ATR: <NUM>
-	- convert to two complement 1 byte number
-- twoComplement2Byte
-	- RET: <NUM>
-	- ATR: <NUM>
-	- convert to two complement 2 byte number
-- twoComplement3Byte
-	- RET: <NUM>
-	- ATR: <NUM>
-	- convert to two complement 3 byte number
-- twoComplement4Byte
-	- RET: <NUM>
-	- ATR: <NUM>
-	- convert to two complement 4 byte number
-- getBit
-	- RET: <BOOL>
-	- ATR: <NUM>, <NUM>
-	- get bit at given position from given number
+
+### Special
 - parseUTC_5b
 	- RET: <STRING>
 	- ATR: <STRING>
@@ -543,7 +579,7 @@
 	- NOTE: as arrays are internally stored in global scope they will not be cleared after each message
 
 
-## Custom variable functions
+### Custom variable functions
 WARN use with caution and responsibly
 
 - setCustomVar

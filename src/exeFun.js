@@ -57,22 +57,6 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return argumentArray[0] < 0x80 ? argumentArray[0] : argumentArray[0] - 0x1_00;
 		},
 	},
-	toInt32: {
-		name: 'toInt32',
-		argsType: [enums_1.ExeType.INT],
-		retType: enums_1.ExeType.INT,
-		fun(argumentArray, variableMap) {
-			return argumentArray[0] < 0x80_00_00_00 ? argumentArray[0] : argumentArray[0] - 0x1_00_00_00_00;
-		},
-	},
-	toInt24: {
-		name: 'toInt24',
-		argsType: [enums_1.ExeType.INT],
-		retType: enums_1.ExeType.INT,
-		fun(argumentArray, variableMap) {
-			return argumentArray[0] < 0x80_00_00 ? argumentArray[0] : argumentArray[0] - 0x1_00_00_00;
-		},
-	},
 	toInt16: {
 		name: 'toInt16',
 		argsType: [enums_1.ExeType.INT],
@@ -90,13 +74,12 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return bigEndian < 0x80_00 ? bigEndian : bigEndian - 0x1_00_00;
 		},
 	},
-	toInt32LE: { // Interpret number in arguments as little-endian
-		name: 'toInt32LE',
+	toInt24: {
+		name: 'toInt24',
 		argsType: [enums_1.ExeType.INT],
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
-			const bigEndian = ((argumentArray[0] & 0xFF) << 24) | ((argumentArray[0] & 0xFF_00) << 8) | ((argumentArray[0] & 0xFF_00_00) >> 8) | ((argumentArray[0] >> 24) & 0xFF);
-			return bigEndian < 0x80_00_00_00 ? bigEndian : bigEndian - 0x1_00_00_00_00;
+			return argumentArray[0] < 0x80_00_00 ? argumentArray[0] : argumentArray[0] - 0x1_00_00_00;
 		},
 	},
 	toInt24LE: { // Interpret number in arguments as little-endian
@@ -106,6 +89,140 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		fun(argumentArray, variableMap) {
 			const bigEndian = ((argumentArray[0] & 0xFF) << 16) | (argumentArray[0]) | ((argumentArray[0] & 0xFF_00_00) >> 16);
 			return bigEndian < 0x80_00_00 ? bigEndian : bigEndian - 0x1_00_00_00;
+		},
+	},
+	toInt32: {
+		name: 'toInt32',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			const arg = BigInt(argumentArray[0]);
+			const mask = 0x80_00_00_00n;
+			const wrap = 0x1_00_00_00_00n;
+			return arg < mask ? Number(arg) : Number(arg - wrap);
+			return argumentArray[0] < 0x80_00_00_00 ? argumentArray[0] : argumentArray[0] - 0x1_00_00_00_00;
+		},
+	},
+	toInt32LE: { // Interpret number in arguments as little-endian
+		name: 'toInt32LE',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			const bigEndian = ((argumentArray[0] & 0xFF) << 24) | ((argumentArray[0] & 0xFF_00) << 8) | ((argumentArray[0] & 0xFF_00_00) >> 8) | ((argumentArray[0] >> 24) & 0xFF);
+			const arg = BigInt(bigEndian);
+			const mask = 0x80_00_00_00n;
+			const wrap = 0x1_00_00_00_00n;
+			return arg < mask ? Number(arg) : Number(arg - wrap);
+			return argumentArray[0] < 0x80_00_00_00 ? argumentArray[0] : argumentArray[0] - 0x1_00_00_00_00;
+
+		},
+	},
+	toInt64: { // Interpret number in arguments
+		name: 'toInt64LE',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
+		retType: enums_1.ExeType.STRING,
+		fun(argumentArray, variableMap) {
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			const string_ = '';
+			const endIndex = struct.ranges[0].iter.start + struct.len;
+			let byte = 0;
+			let toReturn = BigInt(0);
+			for (let i = struct.ranges[0].iter.start; i < endIndex; i += 8) {
+				byte = 0;
+				for (let index = 0; index < 8; index++) {
+					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
+				}
+
+				toReturn = (toReturn << 8n) | BigInt(byte);
+			}
+
+			toReturn = toReturn < 0x80_00_00_00_00_00_00_00n ? toReturn : toReturn - 0x1_00_00_00_00_00_00_00_00n;
+			return toReturn.toString();
+		},
+	},
+	toInt64LE: { // Interpret number in arguments as little-endian
+		name: 'toInt64LE',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
+		retType: enums_1.ExeType.STRING,
+		fun(argumentArray, variableMap) {
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			const string_ = '';
+			const endIndex = struct.ranges[0].iter.start + struct.len;
+			let byte = 0;
+			let toReturn = BigInt(0);
+			for (let i = struct.ranges[0].iter.start + endIndex - 8; i >= 0; i -= 8) {
+				byte = 0;
+				for (let index = 0; index < 8; index++) {
+					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
+				}
+
+				toReturn = (toReturn << 8n) | BigInt(byte);
+			}
+
+			toReturn = toReturn < 0x80_00_00_00_00_00_00_00n ? toReturn : toReturn - 0x1_00_00_00_00_00_00_00_00n;
+			return toReturn.toString();
+		},
+	},
+	toUInt16LE: { // Interpret number in arguments as little-endian
+		name: 'toUInt16LE',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			return ((argumentArray[0] & 0xFF) << 8) | ((argumentArray[0] & 0xFF_00) >> 8);
+		},
+	},
+	toUInt32LE: { // Interpret number in arguments as little-endian
+		name: 'toUInt32LE',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			return ((argumentArray[0] & 0xFF) << 24) | ((argumentArray[0] & 0xFF_00) << 8) | ((argumentArray[0] & 0xFF_00_00) >> 8) | ((argumentArray[0] >> 24) & 0xFF);
+		},
+	},
+	toUInt64LE: { // Interpret number in arguments as little-endian
+		name: 'toUInt64LE',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
+		retType: enums_1.ExeType.STRING,
+		fun(argumentArray, variableMap) {
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			const string_ = '';
+			const endIndex = struct.ranges[0].iter.start + struct.len;
+			let byte = 0;
+			let toReturn = BigInt(0);
+			for (let i = struct.ranges[0].iter.start + endIndex - 8; i >= 0; i -= 8) {
+				byte = 0;
+				for (let index = 0; index < 8; index++) {
+					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
+				}
+
+				toReturn = (toReturn << 8n) | BigInt(byte);
+			}
+
+			toReturn = toReturn < 0x80_00_00_00_00_00_00_00n ? toReturn : toReturn - 0x1_00_00_00_00_00_00_00_00n;
+			return toReturn.toString();
+		},
+	},
+	toUInt64: { // Interpret number in arguments
+		name: 'toUInt64LE',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN],
+		retType: enums_1.ExeType.STRING,
+		fun(argumentArray, variableMap) {
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			const string_ = '';
+			const endIndex = struct.ranges[0].iter.start + struct.len;
+			let byte = 0;
+			let toReturn = BigInt(0);
+			for (let i = struct.ranges[0].iter.start; i < endIndex; i += 8) {
+				byte = 0;
+				for (let index = 0; index < 8; index++) {
+					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
+				}
+
+				toReturn = (toReturn << 8n) | BigInt(byte);
+			}
+
+			toReturn = toReturn < 0x80_00_00_00_00_00_00_00n ? toReturn : toReturn - 0x1_00_00_00_00_00_00_00_00n;
+			return toReturn.toString();
 		},
 	},
 	toFloat16: {
@@ -159,53 +276,60 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return f;
 		},
 	},
-	toUInt16LE: { // Interpret number in arguments as little-endian
-		name: 'toUInt16LE',
+	toDouble: {
+		name: 'toDouble',
 		argsType: [enums_1.ExeType.INT],
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
-			return ((argumentArray[0] & 0xFF) << 8) | ((argumentArray[0] & 0xFF_00) >> 8);
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			const string_ = '';
+			const endIndex = struct.ranges[0].iter.start + struct.len;
+			let byte = 0;
+			const data = [];
+			for (let i = struct.ranges[0].iter.start; i < endIndex; i += 8) {
+				byte = 0;
+				for (let index = 0; index < 8; index++) {
+					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
+				}
+
+				data.push(byte);
+			}
+
+			const buf = new ArrayBuffer(8);
+			const view = new DataView(buf);
+			for (const [i, b] of data.entries()) {
+				view.setUint8(i, b);
+			}
+
+			return view.getFloat64(0);
 		},
 	},
-	toUInt32LE: { // Interpret number in arguments as little-endian
-		name: 'toUInt32LE',
+	toDoubleLE: {
+		name: 'toDoubleLE',
 		argsType: [enums_1.ExeType.INT],
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
-			return ((argumentArray[0] & 0xFF) << 24) | ((argumentArray[0] & 0xFF_00) << 8) | ((argumentArray[0] & 0xFF_00_00) >> 8) | ((argumentArray[0] >> 24) & 0xFF);
-		},
-	},
-	toUInt24LE: { // Interpret number in arguments as little-endian
-		name: 'toUInt24LE',
-		argsType: [enums_1.ExeType.INT],
-		retType: enums_1.ExeType.INT,
-		fun(argumentArray, variableMap) {
-			return ((argumentArray[0] & 0xFF) << 16) | (argumentArray[0] & 0xFF_00) | ((argumentArray[0] & 0xFF_00_00) >> 16);
-		},
-	},
-	toFloat: {
-		name: 'toFloat',
-		argsType: [enums_1.ExeType.INT],
-		retType: enums_1.ExeType.INT,
-		fun(argumentArray, variableMap) {
-			const sign = argumentArray[0] >>> 31 === 0 ? 1 : -1;
-			const e = (argumentArray[0] >>> 23) & 0xFF;
-			const m = e === 0 ? (argumentArray[0] & 0x7F_FF_FF) << 1 : (argumentArray[0] & 0x7F_FF_FF) | 0x80_00_00;
-			const f = sign * m * 2 ** (e - 150);
-			return f;
-		},
-	},
-	toFloatLE: {
-		name: 'toFloatLE',
-		argsType: [enums_1.ExeType.INT],
-		retType: enums_1.ExeType.INT,
-		fun(argumentArray, variableMap) {
-			const bigEndian = ((argumentArray[0] & 0xFF) << 24) | ((argumentArray[0] & 0xFF_00) << 8) | ((argumentArray[0] & 0xFF_00_00) >> 8) | ((argumentArray[0] >> 24) & 0xFF);
-			const sign = bigEndian >>> 31 === 0 ? 1 : -1;
-			const e = (bigEndian >>> 23) & 0xFF;
-			const m = e === 0 ? (bigEndian & 0x7F_FF_FF) << 1 : (bigEndian & 0x7F_FF_FF) | 0x80_00_00;
-			const f = sign * m * 2 ** (e - 150);
-			return f;
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			const string_ = '';
+			const endIndex = struct.ranges[0].iter.start + struct.len;
+			let byte = 0;
+			const data = [];
+			for (let i = struct.ranges[0].iter.start + endIndex - 8; i >= 0; i -= 8) {
+				byte = 0;
+				for (let index = 0; index < 8; index++) {
+					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
+				}
+
+				data.push(byte);
+			}
+
+			const buf = new ArrayBuffer(8);
+			const view = new DataView(buf);
+			for (const [i, b] of data.entries()) {
+				view.setUint8(i, b);
+			}
+
+			return view.getFloat64(0);
 		},
 	},
 	toIntBCD2Digit: {
@@ -262,30 +386,6 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
 			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10_000 * ((argumentArray[0] >> 16) & 0xF) + 100_000 * ((argumentArray[0] >> 20) & 0xF) + 1_000_000 * ((argumentArray[0] >> 24) & 0xF) + 10_000_000 * ((argumentArray[0] >> 28) & 0xF);
-		},
-	},
-	toIntBCD9Digit: {
-		name: 'toIntBCD9Digit',
-		argsType: [enums_1.ExeType.INT],
-		retType: enums_1.ExeType.INT,
-		fun(argumentArray, variableMap) {
-			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10_000 * ((argumentArray[0] >> 16) & 0xF) + 100_000 * ((argumentArray[0] >> 20) & 0xF) + 1_000_000 * ((argumentArray[0] >> 24) & 0xF) + 10_000_000 * ((argumentArray[0] >> 28) & 0xF) + 100_000_000 * ((argumentArray[0] >> 32) & 0xF);
-		},
-	},
-	toIntBCD10Digit: {
-		name: 'toIntBCD10Digit',
-		argsType: [enums_1.ExeType.INT],
-		retType: enums_1.ExeType.INT,
-		fun(argumentArray, variableMap) {
-			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10_000 * ((argumentArray[0] >> 16) & 0xF) + 100_000 * ((argumentArray[0] >> 20) & 0xF) + 1_000_000 * ((argumentArray[0] >> 24) & 0xF) + 10_000_000 * ((argumentArray[0] >> 28) & 0xF) + 100_000_000 * ((argumentArray[0] >> 32) & 0xF) + 1_000_000_000 * ((argumentArray[0] >> 36) & 0xF);
-		},
-	},
-	toIntBCD12Digit: {
-		name: 'toIntBCD12Digit',
-		argsType: [enums_1.ExeType.INT],
-		retType: enums_1.ExeType.INT,
-		fun(argumentArray, variableMap) {
-			return (argumentArray[0] & 0xF) + 10 * ((argumentArray[0] >> 4) & 0xF) + 100 * ((argumentArray[0] >> 8) & 0xF) + 1000 * ((argumentArray[0] >> 12) & 0xF) + 10_000 * ((argumentArray[0] >> 16) & 0xF) + 100_000 * ((argumentArray[0] >> 20) & 0xF) + 1_000_000 * ((argumentArray[0] >> 24) & 0xF) + 10_000_000 * ((argumentArray[0] >> 28) & 0xF) + 100_000_000 * ((argumentArray[0] >> 32) & 0xF) + 1_000_000_000 * ((argumentArray[0] >> 36) & 0xF) + 10_000_000_000 * ((argumentArray[0] >> 40) & 0xF) + 100_000_000_000 * ((argumentArray[0] >> 44) & 0xF);
 		},
 	},
 	getLength: {
@@ -483,8 +583,10 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 					byte <<= 1;
 					byte += struct.ranges[0].iter.base.data[i + index];
 				}
+
 				array.push(byte);
 			}
+
 			let toReturn = '';
 			for (const b of array) {
 				const low = b & 0x0F;
