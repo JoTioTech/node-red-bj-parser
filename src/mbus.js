@@ -28,6 +28,10 @@ function p10(n, e) {
 	}
 
 	const s = ln(n);
+
+	// console.log('P10 N: ' + n);
+	// console.log('P10 E: ' + e);
+	// console.log('P10 S: ' + s);
 	if (!s) {
 		const i = Number.parseInt(n);
 		if (n !== i) {
@@ -36,7 +40,7 @@ function p10(n, e) {
 	}
 
 	let t = String(n);
-	const b = (s ? s<0 : n < 0) ? 1 : 0;
+	const b = (s ? s < 0 : n < 0) ? 1 : 0;
 	const l = ln(t);
 
 	if (e > 0) {
@@ -49,6 +53,8 @@ function p10(n, e) {
 
 		t = sIn(t, e <= 0 ? b : e + b, '.');
 	}
+
+	// console.log('P10 F: ' + s ? t : Number(t));
 
 	return s ? t : Number(t);
 }
@@ -232,7 +238,7 @@ function date(y, m, d) {
 				r = i2s(d, 2) + '.' + i2s(m, 2) + '.' + t.y;
 			if (t.hr !== undefined) {
 				r += ' ' + i2s(t.hr, 2) + ':' + i2s(t.mi, 2)
-				+ (t.se === undefined ? '' : (':' + i2s(t.se, 2)));
+					+ (t.se === undefined ? '' : (':' + i2s(t.se, 2)));
 			}
 
 			if (t.s) {
@@ -319,7 +325,6 @@ function mbusDecoder(a) {
 	function er(s) {
 		console.log((s || 'Wrong frame length') + ', pos ' + n);
 		return false; // XXX
-
 	}
 
 	function i() {
@@ -474,10 +479,14 @@ function mbusDecoder(a) {
 
 	function i2fu(i) {
 		const U = ['Wh', 'kWh', 'MWh', 'kJ', 'MJ', 'GJ', 'W', 'kW', 'MW', 'kJ/h', 'MJ/h', 'GJ/h', 'ml', 'l', 'm\u00B3', 'ml/h', 'l/h', 'm\u00B3/h'];
-		return i < 2 ? [['h,m,s', 'D,M,Y'][i], 0]
-			: i < 0x38 ? [U[Math.floor((i - 2) / 3)], (i - 2) % 3]
-				: i < 0x39 ? ['\u00B0C', -3]
-					: i < 0x3A ? [UH, 0]
+		return i < 2
+			? [['h,m,s', 'D,M,Y'][i], 0]
+			: i < 0x38
+				? [U[Math.floor((i - 2) / 3)], (i - 2) % 3]
+				: i < 0x39
+					? ['\u00B0C', -3]
+					: i < 0x3A
+						? [UH, 0]
 						: [R, 0];
 	}
 
@@ -552,6 +561,7 @@ function mbusDecoder(a) {
 			v = 1;
 		x.storage = 0;
 		x.func = vFunction[0];
+		// console.log('pF: calling P10');
 		x.value = p10(ii('Counter 1', s), ux[1]);
 		x.unit = ux[0];
 		if (vy == 0x3E) {
@@ -706,6 +716,7 @@ function mbusDecoder(a) {
 			} else if (e > 5) {
 				v.f = e == 7 ? deD : deManIdi;
 			} else {
+				// console.log('Set exponent just');
 				v.unit = U[b[2]];
 				v.e = n + b[1];
 			}
@@ -713,34 +724,46 @@ function mbusDecoder(a) {
 	}
 
 	function deVif(v, d) {
-		const t = d >> 3 & 0xF; let n = d & 7; const
-			m = [
-				[1, -3, 6],
-				[1, 1, 7],
-				[2, -6, 8],
-				[3, -3, 9],
-				[[4, 9], [5, 9]],
-				[6, -3, 10],
-				[6, 1, 11],
-				[7, -6, 12],
-				[8, -7, 13],
-				[8, -9, 14],
-				[9, -3, 15],
-				[[10, -3, 16], [11, -3, 16]],
-				[[12, -3, 17], [13, -3, 16]],
-				[[14, -3, 18], [[15, 8], [[16], O]]],
-				[[17, 9], [18, 9]],
-			];
+		// DIF = 0x04
+		// VIF = 0x0E
+
+		const t = d >> 3 & 0xF; // Get's unit category // 1 - energy, correct
+		let n = d & 7; // Get's scaling bits  - 6 correct (should be MJ)
+		// console.log('------------');
+		// console.log('Starting deVif, t=' + t + ', n=' + n);
+		const m = [
+			[1, -3, 6],
+			[1, 0, 7],
+			[2, -6, 8],
+			[3, -3, 9],
+			[[4, 9], [5, 9]],
+			[6, -3, 10],
+			[6, 0, 11],
+			[7, -6, 12],
+			[8, -7, 13],
+			[8, -9, 14],
+			[9, -3, 15],
+			[[10, -3, 16], [11, -3, 16]],
+			[[12, -3, 17], [13, -3, 16]],
+			[[14, -3, 18], [[15, 8], [[16], O]]],
+			[[17, 9], [18, 9]],
+		];
 		if (t == 0xF) {
 			if (n < 3) {
 				v.type = ['Fabrication No', '(Enhanced)', 'Bus Address'][n];
 			}
 		} else {
-			let b = m[t]; let
-				i = 2;
-			for (; isA(b[0]); n &= 0xF ^ 1 << i, b = b[d >> i-- & 1]) {}
+			let b = m[t];
+			let i = 2;
 
+			// console.log('Pre loop: b=', b);
+			for (; isA(b[0]); n &= 0xF ^ 1 << i, b = b[d >> i-- & 1]) {} // No idea what this does, but it doesn't influence our outcome
+			// console.log('Post loop: b=', b);
+
+			// console.log('Calling deV, b=' + b + ', n=' + n); // -> b=1,1,7, n=6
+			// console.log(v);
 			deV(v, b, n);
+			// console.log(v);
 		}
 	}
 
@@ -819,34 +842,59 @@ function mbusDecoder(a) {
 		const w = d & 8 ? 'upper' : 'lower'; const f = d & 4 ? 'last' : 'first'; const b = d & 1 ? 'end' : 'begin';
 		const D = 'Duration of '; const
 			L = ' limit exceed';
-		e = d < 2 ? (d ? 'Too many DIFE\'s' : e)
-			: d < 8 ? ['Storage number', 'Unit number', 'Tariff number', 'Function', 'Data class', 'Data size'][t - 2] + ' not implemented'
-				: d < 0xB ? e
-					: d < 0x10 ? ['Too many VIFE\'s', 'Illegal VIF-Group', 'Illegal VIF-Exponent', 'VIF/DIF mismatch', 'Unimplemented action'][t - 3]
-						: d < 0x15 ? e
-							: d < 0x19 ? ['No data available (undefined value)', 'Data overflow', 'Data underflow', 'Data error'][t - 5]
-								: d < 0x1C ? 'Premature end of record'
-									: d < 0x20 ? e
-										: d < 0x27 ? p + U[t].slice(0, -1)
-											: d < 0x28 ? p + U[35]
-												: d < 0x2C ? 'increment per ' + o + 'put pulse on ' + o + 'put channel #' + (d & 1)
-													: d < 0x36 ? p + U[[36, 8, 9, 17, 37, 26, 38, 39, 23, 24][d - 0x2C]]
-														: d < 0x37 ? m
-															: d < 0x39 ? m + ' / ' + U[24 - (d & 1)]
-																: d < 0x3D ? ['start date(/time) of',
-																	'VIF contains uncorrected unit instead of corrected unit',
-																	'Accumulation only if positive contributions',
-																	'Accumulation of abs value only if negative contributions'][t - 1]
-																	: d < 0x40 ? T[0]
-																		: d < 0x4A ? (t ? '# of exceeds of ' + w + ' limit' : w + ' limit value')
-																			: d < 0x50 ? 'Date (/time) of: ' + b + ' of ' + f + ' ' + w + L
-																				: d < 0x60 ? D + f + ' ' + w + L + ', ' + U[t & 3]
-																					: d < 0x68 ? D + f + ', ' + U[t & 3]
-																						: d < 0x70 ? (t & 2 ? 'Date (/time) of ' + f + ' ' + b : e)
-																							: d < 0x78 ? (v.e = t - 6, e)
-																								: d < 0x7C ? 'Additive correction constant: 10E' + (t - 3) + '*' + v.type + ' (offset)'
-																									: d < 0x7D ? e
-																										: d < 0x7E ? (v.e = 3, e)
+		e = d < 2
+			? (d ? 'Too many DIFE\'s' : e)
+			: d < 8
+				? ['Storage number', 'Unit number', 'Tariff number', 'Function', 'Data class', 'Data size'][t - 2] + ' not implemented'
+				: d < 0xB
+					? e
+					: d < 0x10
+						? ['Too many VIFE\'s', 'Illegal VIF-Group', 'Illegal VIF-Exponent', 'VIF/DIF mismatch', 'Unimplemented action'][t - 3]
+						: d < 0x15
+							? e
+							: d < 0x19
+								? ['No data available (undefined value)', 'Data overflow', 'Data underflow', 'Data error'][t - 5]
+								: d < 0x1C
+									? 'Premature end of record'
+									: d < 0x20
+										? e
+										: d < 0x27
+											? p + U[t].slice(0, -1)
+											: d < 0x28
+												? p + U[35]
+												: d < 0x2C
+													? 'increment per ' + o + 'put pulse on ' + o + 'put channel #' + (d & 1)
+													: d < 0x36
+														? p + U[[36, 8, 9, 17, 37, 26, 38, 39, 23, 24][d - 0x2C]]
+														: d < 0x37
+															? m
+															: d < 0x39
+																? m + ' / ' + U[24 - (d & 1)]
+																: d < 0x3D
+																	? ['start date(/time) of',
+																		'VIF contains uncorrected unit instead of corrected unit',
+																		'Accumulation only if positive contributions',
+																		'Accumulation of abs value only if negative contributions'][t - 1]
+																	: d < 0x40
+																		? T[0]
+																		: d < 0x4A
+																			? (t ? '# of exceeds of ' + w + ' limit' : w + ' limit value')
+																			: d < 0x50
+																				? 'Date (/time) of: ' + b + ' of ' + f + ' ' + w + L
+																				: d < 0x60
+																					? D + f + ' ' + w + L + ', ' + U[t & 3]
+																					: d < 0x68
+																						? D + f + ', ' + U[t & 3]
+																						: d < 0x70
+																							? (t & 2 ? 'Date (/time) of ' + f + ' ' + b : e)
+																							: d < 0x78
+																								? (v.e = (v.e || 0) + t - 6, e)
+																								: d < 0x7C
+																									? 'Additive correction constant: 10E' + (t - 3) + '*' + v.type + ' (offset)'
+																									: d < 0x7D
+																										? e
+																										: d < 0x7E
+																											? (v.e = (v.e || 0) + 3, e)
 																											: ['future value', MS + ' data next'][t & 1];
 		if (e) {
 			v.typeE.push(e);
@@ -859,8 +907,15 @@ function mbusDecoder(a) {
 		if (t == 0xFD || t == 0xFB) {
 			d = y[++i] & m;
 			(t == 0xFD ? deVifD : deVifB)(v, d);
-		} else if (d < 0x7C) {
+		} else if (d < 0x7C) { // NOTE: d is actually vif, not dif because fuck you
+			// console.log('-------------');
+			// console.log('calling deVif');
+			// console.log(d);
+			// console.log('original=');
+			// console.log(v);
 			deVif(v, d);
+			// console.log('modified=');
+			// console.log(v);
 		} else if (d == 0x7C) {
 			b = a[(n -= l - 2) - 1];
 			v.type = ba2s(sl('VIF type', b));
@@ -896,8 +951,24 @@ function mbusDecoder(a) {
 	}
 
 	function rv(v) {
-		deVifs(v);
-		const y = v.dif; const l = ln(y) - 1; let p; let i; let d = y[0]; let f = d >> 4 & 3; let t = d & 0xF; let m; let b = d & 7; let u; let s;
+		// console.log('---------------');
+		// console.log('RV was called with: v=');
+		// console.log(v);
+		deVifs(v); // NOTE: this actually set's up the exponent
+
+		// console.log(v);
+		const y = v.dif;
+		const l = ln(y) - 1;
+		let p;
+		let i;
+		let d = y[0];
+		let f = d >> 4 & 3;
+		let t = d & 0xF;
+		let m;
+		let b = d & 7;
+		let u;
+		let s;
+
 		if (t == 0xD) {
 			p = b = a[n++];
 			if (b < 0xC0) {
@@ -950,6 +1021,9 @@ function mbusDecoder(a) {
 			}
 
 			if (v.e) {
+				// console.log("---------------");
+				// console.log("RV: calling P10");
+				// console.log(v);
 				t = p10(t, v.e);
 			}
 		}
@@ -973,7 +1047,7 @@ function mbusDecoder(a) {
 		v.storage = f;
 		delete v.f;
 		delete v.e;
-		// delete v.vif; // NOTE: changed from official
+		// Delete v.vif; // NOTE: changed from official
 		// delete v.dif; // NOTE: changed from official
 	}
 
@@ -988,6 +1062,7 @@ function mbusDecoder(a) {
 		while (n < e - 1) {
 			let t = a[n]; var
 				v = t == 0x2F ? v : nv();
+			// console.log(v);
 			if ((t & 0xF) == 0xF) {
 				t = t >> 4 & 7; ++n;
 				if (t < 2) {
@@ -1003,6 +1078,11 @@ function mbusDecoder(a) {
 			} else {
 				v.dif = rif([]);
 				v.vif = rif([]);
+				// console.log('----------------------------------------------');
+				// console.log('--                DINGUS                    --');
+				// console.log('----------------------------------------------');
+				// console.log('PV: calling RV');
+				// console.log(v);
 				rv(v);
 			}
 		}
@@ -1013,6 +1093,8 @@ function mbusDecoder(a) {
 }
 
 function unitConv(cfg, f) {
+	// console.log("------------------------");
+	// console.log("STARTING UNIT CONVERSION");
 	const U = ['J', 'Wh', 'W', 'J/h']; const P = ['', 'k', 'M', 'G']; let k; let g;
 
 	function x(d) {
@@ -1020,6 +1102,7 @@ function unitConv(cfg, f) {
 			m;
 		if (u && v && (m = k[u])) {
 			try {
+				// console.log("unitConv: m="+m+", v="+v+", u="+u);
 				d.value = p10(v, m[0]);
 				d.unit = m[1];
 			} catch {}
