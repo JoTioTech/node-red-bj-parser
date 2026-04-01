@@ -123,7 +123,6 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		retType: enums_1.ExeType.STRING,
 		fun(argumentArray, variableMap) {
 			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
-			const string_ = '';
 			const endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
 			let toReturn = BigInt(0);
@@ -146,11 +145,10 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		retType: enums_1.ExeType.STRING,
 		fun(argumentArray, variableMap) {
 			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
-			const string_ = '';
 			const endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
 			let toReturn = BigInt(0);
-			for (let i = struct.ranges[0].iter.start + endIndex - 8; i >= 0; i -= 8) {
+			for (let i = endIndex - 8; i >= struct.ranges[0].iter.start; i -= 8) {
 				byte = 0;
 				for (let index = 0; index < 8; index++) {
 					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
@@ -193,11 +191,10 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		retType: enums_1.ExeType.STRING,
 		fun(argumentArray, variableMap) {
 			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
-			const string_ = '';
 			const endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
 			let toReturn = BigInt(0);
-			for (let i = struct.ranges[0].iter.start + endIndex - 8; i >= 0; i -= 8) {
+			for (let i = endIndex - 8; i >= struct.ranges[0].iter.start; i -= 8) {
 				byte = 0;
 				for (let index = 0; index < 8; index++) {
 					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
@@ -290,7 +287,6 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
 			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
-			const string_ = '';
 			const endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
 			const data = [];
@@ -318,11 +314,10 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
 			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
-			const string_ = '';
 			const endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
 			const data = [];
-			for (let i = struct.ranges[0].iter.start + endIndex - 8; i >= 0; i -= 8) {
+			for (let i = endIndex - 8; i >= struct.ranges[0].iter.start; i -= 8) {
 				byte = 0;
 				for (let index = 0; index < 8; index++) {
 					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
@@ -403,7 +398,6 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		fun(argumentArray, variableMap) {
 			const struct = (0, bin_1.genMaskIterator)(argumentArray[2], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
 			globalThis.parserVariables[argumentArray[1]] = struct.len;
-			// Console.log('Set parser variable', argumentArray[1], 'to', struct.len);
 			return struct.len;
 		},
 	},
@@ -416,7 +410,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			let string_ = '';
 			const endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
-			for (let i = struct.ranges[0].iter.start + endIndex - 8; i >= 0; i -= 8) {
+			for (let i = endIndex - 8; i >= struct.ranges[0].iter.start; i -= 8) {
 				byte = 0;
 				for (let index = 0; index < 8; index++) {
 					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
