@@ -13,6 +13,7 @@ function parseRuleMap(root) {
 		version: root.version || "",
 		schemaVersion: root.schemaVersion || "1.0",
 		clearGlobalVars: root.clearGlobalVars || true,
+		payloadSplitting: root.payloadSplitting || {},
 		rule: {}
 	};
 	Object.keys(root.rule).forEach(rName => {
@@ -56,9 +57,9 @@ function parseRule(rule, ruleMap) {
 	if (rule.set)
 		newRule.set = rule.set.map((set, setId) => {
 			if (!Array.isArray(set.type) && typeof set.val !== "string")
-				throw new Error(`no val atribute in set array with index ${setId}`);
+				throw new Error(`no val atribute in set array with index ${setId}, ${JSON.stringify(set)}`);
 				if (isInvalidSetAction(set.action))
-					throw new Error(`not valid action atribute in set array with index ${setId}`);
+					throw new Error(`not valid action atribute in set array with index ${setId}, ${JSON.stringify(set)}`);
 				if (isActionNotNoAction(set.action) && typeof set.target !== "string")
 						throw new Error(`no target atribute in set array with index ${setId}`);
 				const typeList = (Array.isArray(set.type)) ? set.type.map((type, typeId) => {
