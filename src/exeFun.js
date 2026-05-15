@@ -465,6 +465,28 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return data;
 		},
 	},
+	parseMBUSCustom: {
+		name: 'parseMBUSCustom',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN, enums_1.ExeType.STRING],
+		retType: enums_1.ExeType.JSON,
+		fun(argumentArray, variableMap) {
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			const endIndex = struct.ranges[0].iter.start + struct.len;
+			let byte = 0;
+			const array = [];
+			for (let i = struct.ranges[0].iter.start; i < endIndex; i += 8) {
+				byte = 0;
+				for (let index = 0; index < 8; index++) {
+					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
+				}
+
+				array.push(byte);
+			}
+
+			const data = (0, mbus_1.mbusDecoder)(array, argumentArray[2]);
+			return data;
+		},
+	},
 	parseMBUSMockHeader: {
 		name: 'parseMBUSMockHeader',
 		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN, enums_1.ExeType.STRING],
@@ -540,6 +562,81 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			// console.log(hexFrame);
 
 			const data = (0, mbus_1.mbusDecoder)(frame);
+			return data;
+		},
+	},
+	parseMBUSMockHeaderCustom: {
+		name: 'parseMBUSMockHeaderCustom',
+		argsType: [enums_1.ExeType.STRING, enums_1.ExeType.BIN, enums_1.ExeType.STRING, enums_1.ExeType.STRING],
+		retType: enums_1.ExeType.JSON,
+		fun(argumentArray, variableMap) {
+			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
+			const endIndex = struct.ranges[0].iter.start + struct.len;
+			let byte = 0;
+
+			const array = [];
+
+			for (let i = struct.ranges[0].iter.start; i < endIndex; i += 8) {
+				byte = 0;
+				for (let index = 0; index < 8; index++) {
+					byte <<= 1; byte += struct.ranges[0].iter.base.data[i + index];
+				}
+
+				array.push(byte);
+			}
+
+			const start = 0x68;
+			const cField = 0x08;
+			const address = 0xFD;
+			const ciField = 0x72;
+
+			const identificationNumber = new Uint8Array([0x00, 0x00, 0x00, 0x00]);
+			const manufacturerId = new Uint8Array([0x2F, 0x00]);
+			const version = new Uint8Array([0x07]);
+			const deviceType = new Uint8Array([0xFF]);
+			const accessNumber = new Uint8Array([0x00]);
+			const status = new Uint8Array([0x02]);
+			const configWord = new Uint8Array([0x00, 0x00]);
+			const signature = new Uint8Array([0x2F, 0x2F]);
+
+			let dataBytes = new Uint8Array([]);
+
+			if (argumentArray[2] === 'simple') {
+				dataBytes = new Uint8Array(array);
+			} else if (argumentArray[2] === 'full') {
+				dataBytes = new Uint8Array([
+					...identificationNumber,
+					...manufacturerId,
+					...version,
+					...deviceType,
+					...accessNumber,
+					...status,
+					...configWord,
+					...signature,
+					...array,
+				]);
+			}
+
+			const dataLength = 3 + dataBytes.length;
+			const lValue = dataLength & 0xFF;
+
+			const checksumBytes = new Uint8Array([cField, address, ciField, ...dataBytes]);
+			const checksum = checksumBytes.reduce((sum, byte) => sum + byte, 0) % 256;
+
+			const frame = new Uint8Array([
+				start,
+				lValue,
+				lValue,
+				start,
+				cField,
+				address,
+				ciField,
+				...dataBytes,
+				checksum,
+				0x16,
+			]);
+
+			const data = (0, mbus_1.mbusDecoder)(frame, argumentArray[3]);
 			return data;
 		},
 	},

@@ -9,6 +9,27 @@ exports.mbusDecoder = void 0;
  * Released under the Apache License
  * https://dev-lab.github.com/tmbus/LICENSE
  */
+function arraysEqual(a, b) {
+	if (a === b) {
+		return true;
+	}
+
+	if (a == null || b == null) {
+		return false;
+	}
+
+	if (a.length !== b.length) {
+		return false;
+	}
+
+	for (const [i, element] of a.entries()) {
+		if (element !== b[i]) {
+			return false;
+		}
+	}
+
+	return true;
+}
 
 function ln(t) {
 	return t ? t.length || 0 : 0;
@@ -29,7 +50,7 @@ function p10(n, e) {
 
 	const s = ln(n);
 
-	// console.log('P10 N: ' + n);
+	// Console.log('P10 N: ' + n);
 	// console.log('P10 E: ' + e);
 	// console.log('P10 S: ' + s);
 	if (!s) {
@@ -54,7 +75,7 @@ function p10(n, e) {
 		t = sIn(t, e <= 0 ? b : e + b, '.');
 	}
 
-	// console.log('P10 F: ' + s ? t : Number(t));
+	// Console.log('P10 F: ' + s ? t : Number(t));
 
 	return s ? t : Number(t);
 }
@@ -182,7 +203,7 @@ function ba2bcd(a, x) {
 			s += c;
 		} else {
 			e = 1, s += 'A-C EF'.charAt(c - 10);
-			// console.log("got here2");
+			// Console.log("got here2");
 		}
 	}
 
@@ -307,7 +328,16 @@ function ba2f(a) {
 	return g * f * 2 ** e;
 }
 
-function mbusDecoder(a) {
+function mbusDecoder(a, customLogicString) {
+	let customRules = [];
+	if (customLogicString) {
+		try {
+			customRules = JSON.parse(customLogicString);
+		} catch (error) {
+			console.error('Failed to parse custom logic string', error);
+		}
+	}
+
 	const isA = Array.isArray; const O = [0]; const MS = 'Manufacturer specific'; const R = 'Reserved'; const UH = 'Units for H.C.A.';
 	while (ln(a)) {
 		if (a[0] == 255) {
@@ -557,11 +587,9 @@ function mbusDecoder(a) {
 			s = 2;
 		}
 
-		const x = nv(); const y = nv(); const ux = i2fu(u1 & 0x3F); const vy = u2 & 0x3F; let uy; let
-			v = 1;
+		const x = nv(); const y = nv(); const ux = i2fu(u1 & 0x3F); const vy = u2 & 0x3F; let uy; let v = 1;
 		x.storage = 0;
 		x.func = vFunction[0];
-		// console.log('pF: calling P10');
 		x.value = p10(ii('Counter 1', s), ux[1]);
 		x.unit = ux[0];
 		if (vy == 0x3E) {
@@ -716,7 +744,7 @@ function mbusDecoder(a) {
 			} else if (e > 5) {
 				v.f = e == 7 ? deD : deManIdi;
 			} else {
-				// console.log('Set exponent just');
+				// Console.log('Set exponent just');
 				v.unit = U[b[2]];
 				v.e = n + b[1];
 			}
@@ -756,14 +784,14 @@ function mbusDecoder(a) {
 			let b = m[t];
 			let i = 2;
 
-			// console.log('Pre loop: b=', b);
+			// Console.log('Pre loop: b=', b);
 			for (; isA(b[0]); n &= 0xF ^ 1 << i, b = b[d >> i-- & 1]) {} // No idea what this does, but it doesn't influence our outcome
 			// console.log('Post loop: b=', b);
 
 			// console.log('Calling deV, b=' + b + ', n=' + n); // -> b=1,1,7, n=6
 			// console.log(v);
 			deV(v, b, n);
-			// console.log(v);
+			// Console.log(v);
 		}
 	}
 
@@ -914,7 +942,7 @@ function mbusDecoder(a) {
 			// console.log('original=');
 			// console.log(v);
 			deVif(v, d);
-			// console.log('modified=');
+			// Console.log('modified=');
 			// console.log(v);
 		} else if (d == 0x7C) {
 			b = a[(n -= l - 2) - 1];
@@ -951,7 +979,7 @@ function mbusDecoder(a) {
 	}
 
 	function rv(v) {
-		// console.log('---------------');
+		// Console.log('---------------');
 		// console.log('RV was called with: v=');
 		// console.log(v);
 		deVifs(v); // NOTE: this actually set's up the exponent
@@ -1017,19 +1045,20 @@ function mbusDecoder(a) {
 
 			if (s) {
 				t = m ? (t.charAt(0) == '-' ? t.slice(1) : ('-' + t)) : -t;
-			// console.log("got here3");
+			// Console.log("got here3");
 			}
 
 			if (v.e) {
-				// console.log("---------------");
+				// Console.log("---------------");
 				// console.log("RV: calling P10");
 				// console.log(v);
+				// console.log(t);
 				t = p10(t, v.e);
 			}
 		}
 
 		v.value = t;
-		// V.rawValue = i; // NOTE: changed from  official
+		v.rawValue = i; // NOTE: changed from  official
 		v.func = vFunction[f];
 		d >>= 6; f = d & 1; i = t = u = 0;
 		if (d & 2) {
@@ -1062,7 +1091,6 @@ function mbusDecoder(a) {
 		while (n < e - 1) {
 			let t = a[n]; var
 				v = t == 0x2F ? v : nv();
-			// console.log(v);
 			if ((t & 0xF) == 0xF) {
 				t = t >> 4 & 7; ++n;
 				if (t < 2) {
@@ -1078,12 +1106,29 @@ function mbusDecoder(a) {
 			} else {
 				v.dif = rif([]);
 				v.vif = rif([]);
-				// console.log('----------------------------------------------');
+				// Console.log('----------------------------------------------');
 				// console.log('--                DINGUS                    --');
 				// console.log('----------------------------------------------');
-				// console.log('PV: calling RV');
-				// console.log(v);
 				rv(v);
+
+				let customMatch = null;
+				for (const rule of customRules) {
+					if (arraysEqual(rule.dif, v.dif) && arraysEqual(rule.vif, v.vif)) {
+						customMatch = rule;
+						break;
+					}
+				}
+
+				if (customMatch) {
+					try {
+						const ctx = {v};
+						const fn = new Function('ctx', customMatch.function);
+						fn(ctx);
+					} catch (error) {
+						console.error('Error executing custom MBUS function', error);
+					}
+				}
+				// Console.log(v);
 			}
 		}
 	}
@@ -1093,7 +1138,7 @@ function mbusDecoder(a) {
 }
 
 function unitConv(cfg, f) {
-	// console.log("------------------------");
+	// Console.log("------------------------");
 	// console.log("STARTING UNIT CONVERSION");
 	const U = ['J', 'Wh', 'W', 'J/h']; const P = ['', 'k', 'M', 'G']; let k; let g;
 
@@ -1102,7 +1147,7 @@ function unitConv(cfg, f) {
 			m;
 		if (u && v && (m = k[u])) {
 			try {
-				// console.log("unitConv: m="+m+", v="+v+", u="+u);
+				// Console.log("unitConv: m="+m+", v="+v+", u="+u);
 				d.value = p10(v, m[0]);
 				d.unit = m[1];
 			} catch {}
