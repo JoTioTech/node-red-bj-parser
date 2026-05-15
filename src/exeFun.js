@@ -182,7 +182,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 		argsType: [enums_1.ExeType.INT],
 		retType: enums_1.ExeType.INT,
 		fun(argumentArray, variableMap) {
-			return ((argumentArray[0] & 0xFF) << 24) | ((argumentArray[0] & 0xFF_00) << 8) | ((argumentArray[0] & 0xFF_00_00) >> 8) | ((argumentArray[0] >> 24) & 0xFF);
+			return (((argumentArray[0] & 0xFF) << 24) | ((argumentArray[0] & 0xFF_00) << 8) | ((argumentArray[0] & 0xFF_00_00) >> 8) | ((argumentArray[0] >> 24) & 0xFF)) >>> 0;
 		},
 	},
 	toUInt64LE: { // Interpret number in arguments as little-endian
