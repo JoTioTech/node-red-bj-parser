@@ -1,6 +1,4 @@
 'use strict';
-Object.defineProperty(exports, '__esModule', {value: true});
-exports.mbusDecoder = void 0;
 /**
  * Tmbus JavaScript Library v1.0.0
  * https://github.com/dev-lab/tmbus
@@ -9,6 +7,13 @@ exports.mbusDecoder = void 0;
  * Released under the Apache License
  * https://dev-lab.github.com/tmbus/LICENSE
  */
+const vm = require('node:vm');
+
+const scriptCache = new Map();
+
+Object.defineProperty(exports, '__esModule', {value: true});
+exports.mbusDecoder = void 0;
+
 function arraysEqual(a, b) {
 	if (a === b) {
 		return true;
@@ -1045,14 +1050,9 @@ function mbusDecoder(a, customLogicString) {
 
 			if (s) {
 				t = m ? (t.charAt(0) == '-' ? t.slice(1) : ('-' + t)) : -t;
-			// Console.log("got here3");
 			}
 
 			if (v.e) {
-				// Console.log("---------------");
-				// console.log("RV: calling P10");
-				// console.log(v);
-				// console.log(t);
 				t = p10(t, v.e);
 			}
 		}
@@ -1076,8 +1076,6 @@ function mbusDecoder(a, customLogicString) {
 		v.storage = f;
 		delete v.f;
 		delete v.e;
-		// Delete v.vif; // NOTE: changed from official
-		// delete v.dif; // NOTE: changed from official
 	}
 
 	function pV() {
@@ -1089,8 +1087,8 @@ function mbusDecoder(a, customLogicString) {
 		deS(r);
 		n += 2;
 		while (n < e - 1) {
-			let t = a[n]; var
-				v = t == 0x2F ? v : nv();
+			let t = a[n];
+			var v = t == 0x2F ? v : nv();
 			if ((t & 0xF) == 0xF) {
 				t = t >> 4 & 7; ++n;
 				if (t < 2) {
@@ -1106,9 +1104,6 @@ function mbusDecoder(a, customLogicString) {
 			} else {
 				v.dif = rif([]);
 				v.vif = rif([]);
-				// Console.log('----------------------------------------------');
-				// console.log('--                DINGUS                    --');
-				// console.log('----------------------------------------------');
 				rv(v);
 
 				let customMatch = null;
@@ -1121,20 +1116,64 @@ function mbusDecoder(a, customLogicString) {
 
 				if (customMatch) {
 					try {
-						const ctx = {v};
-						const fn = new Function('ctx', customMatch.function);
-						fn(ctx);
+						const newV = executeCustomFunction(customMatch.function, v);
 					} catch (error) {
-						console.error('Error executing custom MBUS function', error);
+						console.error('Custom MBUS execution failed', error);
 					}
 				}
-				// Console.log(v);
 			}
 		}
 	}
 
 	r.fixed ? pF() : pV();
 	return r;
+}
+
+function executeCustomFunction(functionBody, ctx) {
+	// there isn't thread separation, prototype isolation, and memory limits aren't enforced
+	// but context is limited and execution time restricted
+	let script = scriptCache.get(functionBody);
+
+	if (!script) {
+		const wrappedCode = `'use strict';\n(function(ctx) { ${functionBody} })(ctx);`;
+		try {
+			script = new vm.Script(wrappedCode, {
+				filename: 'custom-mbus.js',
+			});
+			scriptCache.set(functionBody, script);
+		} catch (error) {
+			console.error('Syntax error in custom MBUS function', error);
+			return null;
+		}
+	}
+
+	// Expose only absolutely necessary globals. No `require`, `process`, `setTimeout`, etc.
+	const sandbox = {
+		ctx, // The mutable context
+		console: {
+			log: (...args) => console.log('[custom-mbus]', ...args),
+			error: (...args) => console.error('[custom-mbus]', ...args),
+		},
+		Math,
+		Date,
+		Number, String, Boolean, Object, Array, JSON, parseInt: Number.parseInt, parseFloat: Number.parseFloat,
+		isNaN, isFinite,
+		// `RegExp` (RegExp is safe but could be used for ReDoS – optional)
+	};
+	// Freeze the sandbox to prevent adding new globals
+	Object.freeze(sandbox);
+
+	try {
+		script.runInNewContext(sandbox, {timeout: 10});
+		return ctx;
+	} catch (error) {
+		if (error.code === 'ERR_SCRIPT_EXECUTION_TIMEOUT') {
+			console.error('Custom MBUS function timed out after 10ms');
+		} else {
+			console.error('Runtime error in custom MBUS function', error);
+		}
+		return null;
+	}
 }
 
 function unitConv(cfg, f) {

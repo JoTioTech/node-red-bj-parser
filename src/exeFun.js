@@ -513,7 +513,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			const ciField = 0x72; // CI field: Variable Data Response
 
 			const identificationNumber = new Uint8Array([0x00, 0x00, 0x00, 0x00]); // 4 bytes (e.g., device ID)
-			const manufacturerId = new Uint8Array([0x2F, 0x00]); // 2 bytes
+			const manufacturerId = new Uint8Array([0xF4, 0x29]); // 2 bytes
 			const version = new Uint8Array([0x07]); // 1 byte (FW 2.0.0)
 			const deviceType = new Uint8Array([0xFF]); // 1 byte (unknown)
 			const accessNumber = new Uint8Array([0x00]); // 1 byte
@@ -591,7 +591,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			const ciField = 0x72;
 
 			const identificationNumber = new Uint8Array([0x00, 0x00, 0x00, 0x00]);
-			const manufacturerId = new Uint8Array([0x2F, 0x00]);
+			const manufacturerId = new Uint8Array([0xF4, 0x29]); // 2 bytes
 			const version = new Uint8Array([0x07]);
 			const deviceType = new Uint8Array([0xFF]);
 			const accessNumber = new Uint8Array([0x00]);
@@ -636,7 +636,12 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 				0x16,
 			]);
 
+			const startTime = performance.now()
 			const data = (0, mbus_1.mbusDecoder)(frame, argumentArray[3]);
+			const endTime = performance.now()
+
+			console.log(`Call to doSomething took ${endTime - startTime} milliseconds`)
+
 			return data;
 		},
 	},
