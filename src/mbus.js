@@ -246,14 +246,25 @@ function i2c(i) {
 	return String.fromCharCode(i);
 }
 
+const asciiDecoder = new TextDecoder('ascii');
+
 function ba2s(a) {
-	const r = []; let
-		i = ln(a);
-	while (i) {
-		r.push(i2c(a[--i]));
+	const len = a.length;
+
+	for (let i = 0; i < len; i++) {
+		const b = a[i];
+		if ((b < 32 || b > 126) && b !== 9 && b !== 10 && b !== 13 && b !== 0) {
+			return a;
+		}
 	}
 
-	return r.join('');
+		const reversed = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+        reversed[i] = a[len - 1 - i];
+    }
+
+    // 3. Fast native decode on the reversed array
+    return asciiDecoder.decode(reversed);
 }
 
 function date(y, m, d) {
@@ -984,9 +995,6 @@ function mbusDecoder(a, customLogicString) {
 	}
 
 	function rv(v) {
-		// Console.log('---------------');
-		// console.log('RV was called with: v=');
-		// console.log(v);
 		deVifs(v); // NOTE: this actually set's up the exponent
 
 		// console.log(v);
@@ -997,8 +1005,8 @@ function mbusDecoder(a, customLogicString) {
 		let d = y[0];
 		let f = d >> 4 & 3;
 		let t = d & 0xF;
-		let m;
 		let b = d & 7;
+		let m;
 		let u;
 		let s;
 
@@ -1056,6 +1064,8 @@ function mbusDecoder(a, customLogicString) {
 				t = p10(t, v.e);
 			}
 		}
+
+		console.log(t);
 
 		v.value = t;
 		v.rawValue = i; // NOTE: changed from  official
@@ -1147,7 +1157,7 @@ function executeCustomFunction(functionBody, ctx) {
 		}
 	}
 
-	// Expose only absolutely necessary globals. No `require`, `process`, `setTimeout`, etc.
+	// Expose only absolutely necessary globals
 	const sandbox = {
 		ctx, // The mutable context
 		console: {
@@ -1158,9 +1168,7 @@ function executeCustomFunction(functionBody, ctx) {
 		Date,
 		Number, String, Boolean, Object, Array, JSON, parseInt: Number.parseInt, parseFloat: Number.parseFloat,
 		isNaN, isFinite,
-		// `RegExp` (RegExp is safe but could be used for ReDoS – optional)
 	};
-	// Freeze the sandbox to prevent adding new globals
 	Object.freeze(sandbox);
 
 	try {
