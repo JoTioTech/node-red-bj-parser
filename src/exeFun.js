@@ -114,7 +114,6 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			const wrap = 0x1_00_00_00_00n;
 			return arg < mask ? Number(arg) : Number(arg - wrap);
 			return argumentArray[0] < 0x80_00_00_00 ? argumentArray[0] : argumentArray[0] - 0x1_00_00_00_00;
-
 		},
 	},
 	toInt64: { // Interpret number in arguments
@@ -125,7 +124,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
 			const endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
-			let toReturn = BigInt(0);
+			let toReturn = 0n;
 			for (let i = struct.ranges[0].iter.start; i < endIndex; i += 8) {
 				byte = 0;
 				for (let index = 0; index < 8; index++) {
@@ -147,7 +146,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
 			const endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
-			let toReturn = BigInt(0);
+			let toReturn = 0n;
 			for (let i = endIndex - 8; i >= struct.ranges[0].iter.start; i -= 8) {
 				byte = 0;
 				for (let index = 0; index < 8; index++) {
@@ -177,6 +176,94 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			return ((argumentArray[0] & 0xFF) << 16) | (argumentArray[0] & 0xFF_00) | ((argumentArray[0] & 0xFF_00_00) >> 16);
 		},
 	},
+	parseCP32LE: {
+		name: 'parseCP32LE',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			const value = (((argumentArray[0] & 0xFF) << 24) | ((argumentArray[0] & 0xFF_00) << 8) | ((argumentArray[0] & 0xFF_00_00) >> 8) | ((argumentArray[0] >> 24) & 0xFF)) >>> 0;
+
+			// Byte 0: Minutes & Validity
+			const min = value & 0x3F;
+			const isInvalid = Boolean((value >> 7) & 0x01);
+
+			// Byte 1: Hours & Summer Time
+			const hour = (value >> 8) & 0x1F;
+			const isSummerTime = Boolean((value >> 15) & 0x01);
+
+			// Byte 2: Day of Month
+			const day = (value >> 16) & 0x1F;
+
+			// Byte 3: Month & 2-digit Year (nibble-packed)
+			const month = (value >> 24) & 0x0F;
+
+			const hundredYear = (value >> 13) & 0x03;
+			const yearLow = (value >> 21) & 0x07;
+			const yearHigh = (value >> 28) & 0x0F;
+			const yearWithinCentury = (yearHigh << 3) | yearLow;
+
+			const fullYear = 1900 + (100 * hundredYear) + yearWithinCentury;
+
+			const unixTimestampMs = Date.UTC(fullYear, month - 1, day, hour, min, 0, 0);
+
+			return {
+				year: fullYear,
+				month,
+				day,
+				hour,
+				min,
+				sec: 0,
+				summerTime: isSummerTime,
+				valid: !isInvalid,
+				unixTimestampMs,
+				unixTimestampSec: Math.floor(unixTimestampMs / 1000),
+			};
+		},
+	},
+	parseCP32: {
+		name: 'parseCP32',
+		argsType: [enums_1.ExeType.INT],
+		retType: enums_1.ExeType.INT,
+		fun(argumentArray, variableMap) {
+			const value = (argumentArray[0] >>> 0) & 0xFF_FF_FF_FF;
+
+			// Byte 0: Minutes & Validity
+			const min = value & 0x3F;
+			const isInvalid = Boolean((value >> 7) & 0x01);
+
+			// Byte 1: Hours & Summer Time
+			const hour = (value >> 8) & 0x1F;
+			const isSummerTime = Boolean((value >> 15) & 0x01);
+
+			// Byte 2: Day of Month
+			const day = (value >> 16) & 0x1F;
+
+			// Byte 3: Month & 2-digit Year (nibble-packed)
+			const month = (value >> 24) & 0x0F;
+
+			const hundredYear = (value >> 13) & 0x03;
+			const yearLow = (value >> 21) & 0x07;
+			const yearHigh = (value >> 28) & 0x0F;
+			const yearWithinCentury = (yearHigh << 3) | yearLow;
+
+			const fullYear = 1900 + (100 * hundredYear) + yearWithinCentury;
+
+			const unixTimestampMs = Date.UTC(fullYear, month - 1, day, hour, min, 0, 0);
+
+			return {
+				year: fullYear,
+				month,
+				day,
+				hour,
+				min,
+				sec: 0,
+				summerTime: isSummerTime,
+				valid: !isInvalid,
+				unixTimestampMs,
+				unixTimestampSec: Math.floor(unixTimestampMs / 1000),
+			};
+		},
+	},
 	toUInt32LE: { // Interpret number in arguments as little-endian
 		name: 'toUInt32LE',
 		argsType: [enums_1.ExeType.INT],
@@ -193,7 +280,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			const struct = (0, bin_1.genMaskIterator)(argumentArray[1], argumentArray[0], new evaluators_1.ExpEvaluator(variableMap));
 			const endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
-			let toReturn = BigInt(0);
+			let toReturn = 0n;
 			for (let i = endIndex - 8; i >= struct.ranges[0].iter.start; i -= 8) {
 				byte = 0;
 				for (let index = 0; index < 8; index++) {
@@ -216,7 +303,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 			const string_ = '';
 			const endIndex = struct.ranges[0].iter.start + struct.len;
 			let byte = 0;
-			let toReturn = BigInt(0);
+			let toReturn = 0n;
 			for (let i = struct.ranges[0].iter.start; i < endIndex; i += 8) {
 				byte = 0;
 				for (let index = 0; index < 8; index++) {
@@ -636,11 +723,7 @@ exports.EXP_FUNCTION_ENUM = Object.freeze({
 				0x16,
 			]);
 
-			const startTime = performance.now()
 			const data = (0, mbus_1.mbusDecoder)(frame, argumentArray[3]);
-			const endTime = performance.now()
-
-			console.log(`Call to doSomething took ${endTime - startTime} milliseconds`)
 
 			return data;
 		},
