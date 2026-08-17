@@ -545,11 +545,33 @@
 	- RET: <STRING>
 	- ATR: <MASK_EXP> <BIN>
 	- parse given part of message as MBUS message, only long frame is supported and header must be included
+	- decrypting of payload needs to be handled outside for parser
 - parseMBUSMockHeader
 	- RET: <STRING>
 	- ATR: <MASK_EXP> <BIN> <STRING>
 	- mocks MBUS message header so that the payload will pass trough the parser without problems
 	- last argument can either be simple (then only only 4 start bytes + CI fields are present) or full where whole MBUS header is created
+	- decrypting of payload needs to be handled outside for parser
+- parseMBUSCustom
+	- RET: <STRING>
+	- ATR: <MASK_EXP <BIN> <STRING> <STRING>
+	- parse given part of message as MBUS message, only long frame is supported and header must be included
+	- enables custom handling of some DIFs/VIFs - like for manufacturer specific data. Last string is a JSON containing JavaScript logic to handle these functions
+	- decrypting of payload needs to be handled outside for parser
+- parseMBUSMockHeaderCustom
+	- RET: <STRING>
+	- ATR: <MASK_EXP <BIN> <STRING> <STRING>
+	- mocks MBUS message header so that the payload will pass trough the parser without problems
+	- enables custom handling of some DIFs/VIFs - like for manufacturer specific data. Last string is a JSON containing JavaScript logic to handle these functions
+	- decrypting of payload needs to be handled outside for parser
+- parseCP32
+	- RET: <STRING>
+	- ATR: <INT>
+	- parses 4 byte number as a CP32 date + time format
+- parseCP32LE
+	- RET: <STRING>
+	- ATR: <INT>
+	- parses 4 byte number as a CP32 date + time format, reverses endianness
 - toIMEI
   - RET: <STRING>
 	- ATR: <MASK_EXP> <BIN>
